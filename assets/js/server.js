@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
-const Customer = require('./models/Customer');
+const Customer = require('../../models/Customer');
 const app = express();
 
 // Debug logging for environment variables

@@ -1,6 +1,17 @@
 // Add console.log to verify script is loading
 console.log('Payment.js loaded');
 
+const RENDER_URL = 'https://eatreal-backend.onrender.com'; // Replace this with your actual Render URL
+
+// Get PayPal client ID from backend
+fetch(`${RENDER_URL}/api/get-paypal-config`)
+    .then(response => response.json())
+    .then(config => {
+        const paypalScript = document.createElement('script');
+        paypalScript.src = `https://www.paypal.com/sdk/js?client-id=${config.clientId}`;
+        document.head.appendChild(paypalScript);
+    });
+
 document.addEventListener('DOMContentLoaded', () => {
     // Clear any existing buttons first
     document.getElementById('paypal-button-container').innerHTML = '';
@@ -22,27 +33,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            return actions.order.create({
-                purchase_units: [{
-                    amount: {
-                        value: '14.99',
-                        currency_code: 'GBP'
-                    }
-                }]
-            });
+            return fetch(`https://eatreal-backend.onrender.com/api/create-payment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: emailInput.value
+                })
+            })
+            .then(response => response.json())
+            .then(orderData => orderData.id);
         },
         onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
                 const customerEmail = document.getElementById('email').value;
                 
-                // Show success message
-                showSuccess();
-                
-                // Trigger immediate download
-                triggerDownload();
-                
-                // Send confirmation email with PDF
-                sendConfirmationEmail(customerEmail);
+                return fetch(`https://eatreal-backend.onrender.com/api/payment-success`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderID: data.orderID,
+                        email: customerEmail
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccess();
+                        triggerDownload();
+                    } else {
+                        alert('There was a problem processing your order. Please contact support.');
+                    }
+                });
             });
         }
     }).render('#paypal-button-container');
@@ -83,44 +108,24 @@ function showSuccess() {
 }
 
 function triggerDownload() {
-    // Create a temporary link to trigger the download
-    const link = document.createElement('a');
-    link.href = 'assets/products/FoodBible.pdf'; // Path to your PDF
-    link.download = 'The-Food-Bible.pdf'; // Name for downloaded file
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-async function handlePayment(email) {
-    try {
-        const response = await fetch('/api/create-payment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email })
-        });
-        
-        const data = await response.json();
-        if (data.success) {
-            await sendConfirmationEmail(email);
-        }
-    } catch (error) {
-        console.error('Payment failed:', error);
-    }
-}
-
-async function sendConfirmationEmail(email) {
-    try {
-        await fetch('/api/send-email', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email })
-        });
-    } catch (error) {
-        console.error('Email sending failed:', error);
-    }
+    fetch(`https://eatreal-backend.onrender.com/api/download-pdf`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: document.getElementById('email').value
+        })
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'The-Food-Bible.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    });
 }
