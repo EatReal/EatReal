@@ -1,14 +1,17 @@
 {
   "name": "eat-real",
   "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
   "dependencies": {
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.21.2",
-    "fs": "^0.0.1-security",
     "mongoose": "^5.13.8",
-    "nodemailer": "^6.9.16",
-    "path": "^0.12.7"
+    "nodemailer": "^6.9.16"
   }
 }
