@@ -1,54 +1,38 @@
+// Add console.log to verify script is loading
 console.log('Payment.js loaded');
 
 const RENDER_URL = 'https://eatreal-backend.onrender.com';
 
-// Initialize PayPal
-async function initializePayPal() {
-    try {
-        // First try to get the PayPal config from the server with updated CORS headers
-        const response = await fetch(`${RENDER_URL}/api/get-paypal-config`, {
-            method: 'GET',
-            mode: 'cors', // Explicitly set CORS mode
-            credentials: 'omit', // Don't send credentials
-            headers: {
-                'Accept': 'application/json',
-                'Origin': 'http://127.0.0.1:5500'
-            }
-        });
-
+// Add error handling and logging
+fetch(`${RENDER_URL}/api/get-paypal-config`)
+    .then(response => {
+        console.log('PayPal config response status:', response.status);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        const config = await response.json();
-        console.log('PayPal config received:', config);
-
-        if (!config.clientId) {
-            throw new Error('No PayPal client ID received');
-        }
-
-        // Load the PayPal SDK
-        const paypalScript = document.createElement('script');
-        paypalScript.src = `https://www.paypal.com/sdk/js?client-id=${config.clientId}&currency=GBP`;
-        paypalScript.async = true;
-        
-        // Wait for the script to load
-        await new Promise((resolve, reject) => {
+        return response.json();
+    })
+    .then(config => {
+        console.log('PayPal config received, loading SDK...');
+        return new Promise((resolve, reject) => {
+            const paypalScript = document.createElement('script');
+            paypalScript.src = `https://www.paypal.com/sdk/js?client-id=${config.clientId}&currency=GBP`;
             paypalScript.onload = () => {
                 console.log('PayPal SDK loaded successfully');
                 resolve();
             };
-            paypalScript.onerror = (err) => {
-                console.error('PayPal SDK failed to load:', err);
-                reject(err);
+            paypalScript.onerror = () => {
+                reject(new Error('Failed to load PayPal SDK'));
             };
             document.head.appendChild(paypalScript);
         });
-
+    })
+    .then(() => {
+        console.log('Initializing PayPal buttons...');
         initializePayPalButtons();
-
-    } catch (error) {
-        console.error('Error initializing PayPal:', error);
+    })
+    .catch(error => {
+        console.error('Error in PayPal setup:', error);
         const container = document.getElementById('paypal-button-container');
         if (container) {
             container.innerHTML = `
@@ -58,25 +42,14 @@ async function initializePayPal() {
                 </div>
             `;
         }
-    }
-}
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializePayPal);
+    });
 
 function initializePayPalButtons() {
-    console.log('Initializing PayPal buttons');
-    if (typeof paypal === 'undefined') {
-        console.error('PayPal SDK not loaded');
-        return;
-    }
+    // Clear any existing buttons first
+    document.getElementById('paypal-button-container').innerHTML = '';
+    document.getElementById('paypal-card-button').innerHTML = '';
 
-    // Clear existing buttons
-    const container = document.getElementById('paypal-button-container');
-    if (container) {
-        container.innerHTML = '';
-    }
-
+    // PayPal Button
     paypal.Buttons({
         style: {
             layout: 'vertical',
@@ -84,11 +57,12 @@ function initializePayPalButtons() {
             shape: 'rect',
             label: 'paypal'
         },
+        fundingSource: paypal.FUNDING.PAYPAL,
         createOrder: function(data, actions) {
             const emailInput = document.getElementById('email');
             if (!emailInput.value || !emailInput.checkValidity()) {
                 alert('Please enter a valid email address');
-                return Promise.reject('Invalid email');
+                return;
             }
 
             return actions.order.create({
@@ -100,34 +74,58 @@ function initializePayPalButtons() {
                 }]
             });
         },
-        onApprove: async function(data, actions) {
-            const order = await actions.order.capture();
-            const customerEmail = document.getElementById('email').value;
-            
-            try {
-                const response = await fetch(`${RENDER_URL}/api/send-confirmation`, {
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                const customerEmail = document.getElementById('email').value;
+                
+                return fetch(`${RENDER_URL}/api/payment-success`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        email: customerEmail,
-                        orderId: order.id
+                        orderID: data.orderID,
+                        email: customerEmail
                     })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccess();
+                        triggerDownload();
+                    } else {
+                        alert('There was a problem processing your order. Please contact support.');
+                    }
                 });
-                
-                const result = await response.json();
-                if (result.success) {
-                    showSuccess();
-                } else {
-                    alert('There was a problem processing your order. Please contact support.');
-                }
-            } catch (error) {
-                console.error('Error processing order:', error);
-                alert('There was a problem processing your order. Please contact support.');
-            }
+            });
         }
     }).render('#paypal-button-container');
+
+    // Card Payment Button
+    paypal.Buttons({
+        style: {
+            layout: 'vertical',
+            color: 'black',
+            shape: 'rect',
+            label: 'pay'
+        },
+        fundingSource: paypal.FUNDING.CARD,
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '14.99',
+                        currency_code: 'GBP'
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                showSuccess();
+            });
+        }
+    }).render('#paypal-card-button');
 }
 
 function showSuccess() {
@@ -139,7 +137,7 @@ function showSuccess() {
 }
 
 function triggerDownload() {
-    fetch(`https://eatreal-backend.onrender.com/api/download-pdf`, {
+    fetch(`${RENDER_URL}/api/download-pdf`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
