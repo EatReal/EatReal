@@ -614,62 +614,127 @@ h2, h3 {
 
 /* Ensure the checkout container fills the space */
 .checkout-container {
-    margin: 20px auto;
-    padding: 30px;
-    background: #FDEECE;
-    border-radius: 8px;
-    min-height: calc(100vh - 40px); /* Account for margin */
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-/* Checkout page pricing */
-.checkout-price-container {
-    display: inline-flex;
-    align-items: center;
-    margin: 15px 0;
+.form-group {
+    margin-bottom: 20px;
 }
 
-.checkout-original-price {
-    color: #666;
-    text-decoration: line-through;
-    font-size: 1.2em;
-    margin-right: 8px;
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
 }
 
-.checkout-price {
-    color: #000;
-    font-size: 2em;
-    font-weight: bold;
-    line-height: 1;
+.discount-input-container {
+    display: flex;
+    gap: 10px;
 }
 
-.discount-section {
-    margin: 20px 0;
-    text-align: center;
-}
-
-.discount-input {
+.discount-input-container input {
+    flex: 1;
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-right: 8px;
-    width: 150px;
 }
 
-.apply-button {
+.apply {
     padding: 8px 16px;
-    background-color: #000;
+    background: #000;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
 
-.apply-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    font-size: 1.2em;
+    border-top: 1px dotted #999;
+    padding-top: 10px;
 }
 
-#discountMessage {
-    margin-top: 8px;
-    font-size: 0.9em;
+.payment-separator {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+}
+
+.payment-separator::before,
+.payment-separator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background: #ddd;
+}
+
+.payment-separator::before {
+    left: 0;
+}
+
+.payment-separator::after {
+    right: 0;
+}
+
+.payment-separator span {
+    background: #FDEECE;
+    padding: 0 10px;
+    color: #666;
+}
+
+.credit-card-button {
+    width: 100%;
+    padding: 12px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#paypal-button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.payment-separator {
+    text-align: center;
+    position: relative;
+    margin: 10px 0;
+}
+
+.payment-separator::before,
+.payment-separator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background: #ddd;
+}
+
+.payment-separator::before {
+    left: 0;
+}
+
+.payment-separator::after {
+    right: 0;
+}
+
+.payment-separator span {
+    background: #FDEECE;
+    padding: 0 10px;
+    color: #666;
 }

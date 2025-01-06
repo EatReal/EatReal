@@ -47,51 +47,66 @@ fetch(`${RENDER_URL}/api/get-paypal-config`)
 let currentPrice = 14.99;
 const originalPrice = 14.99;
 
-function applyDiscount() {
-    const discountCode = document.getElementById('discountCode').value.toUpperCase();
-    const messageElement = document.getElementById('discountMessage');
+// Find the existing Apply button and add click handler
+document.querySelector('.apply').addEventListener('click', function() {
+    const discountCode = document.querySelector('input[placeholder="Enter promo code"]').value.toUpperCase();
     
     if (discountCode === 'EATREAL20') {
         // Apply 20% discount
         currentPrice = (originalPrice * 0.8).toFixed(2);
-        messageElement.innerHTML = '<span style="color: green;">20% discount applied!</span>';
         
-        // Update price display
-        document.querySelector('.price').textContent = `£${currentPrice}`;
+        // Update total price display
+        document.querySelector('.total-amount').textContent = `£${currentPrice}`;
         
         // Disable the input and button
-        document.getElementById('discountCode').disabled = true;
-        document.querySelector('.apply-button').disabled = true;
+        document.querySelector('input[placeholder="Enter promo code"]').disabled = true;
+        document.querySelector('.apply').disabled = true;
+        
+        // Show success message
+        alert('20% discount applied!');
         
         // Reinitialize PayPal with new price
         document.getElementById('paypal-button-container').innerHTML = '';
         initializePayPalButtons();
     } else {
-        messageElement.innerHTML = '<span style="color: red;">Invalid discount code</span>';
+        alert('Invalid discount code');
     }
-}
+});
 
+// PayPal button initialization
 function initializePayPalButtons() {
-    // Clear any existing buttons first
-    document.getElementById('paypal-button-container').innerHTML = '';
-    document.getElementById('paypal-card-button').innerHTML = '';
+    // Clear existing content
+    const mainContainer = document.getElementById('paypal-button-container');
+    mainContainer.innerHTML = '';
+    
+    // Create container for PayPal button
+    const paypalContainer = document.createElement('div');
+    paypalContainer.id = 'paypal-primary-button';
+    
+    // Create single or separator
+    const orSeparator = document.createElement('div');
+    orSeparator.className = 'payment-separator';
+    orSeparator.innerHTML = '<span>or</span>';
+    
+    // Create container for card button
+    const cardContainer = document.createElement('div');
+    cardContainer.id = 'paypal-card-button';
+    
+    // Add elements in order
+    mainContainer.appendChild(paypalContainer);
+    mainContainer.appendChild(orSeparator);  // Only one "or" separator
+    mainContainer.appendChild(cardContainer);
 
-    // PayPal Button
+    // Render PayPal button
     paypal.Buttons({
+        fundingSource: paypal.FUNDING.PAYPAL,
         style: {
-            layout: 'vertical',
+            layout: 'horizontal',
             color: 'gold',
             shape: 'rect',
             label: 'paypal'
         },
-        fundingSource: paypal.FUNDING.PAYPAL,
         createOrder: function(data, actions) {
-            const emailInput = document.getElementById('email');
-            if (!emailInput.value || !emailInput.checkValidity()) {
-                alert('Please enter a valid email address');
-                return;
-            }
-
             return actions.order.create({
                 purchase_units: [{
                     amount: {
@@ -100,42 +115,18 @@ function initializePayPalButtons() {
                 }]
             });
         },
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                const customerEmail = document.getElementById('email').value;
-                
-                return fetch(`${RENDER_URL}/api/payment-success`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        orderID: data.orderID,
-                        email: customerEmail
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showSuccess();
-                        triggerDownload();
-                    } else {
-                        alert('There was a problem processing your order. Please contact support.');
-                    }
-                });
-            });
-        }
-    }).render('#paypal-button-container');
+        // ... rest of your PayPal button code
+    }).render('#paypal-primary-button');
 
-    // Card Payment Button
+    // Render card button
     paypal.Buttons({
+        fundingSource: paypal.FUNDING.CARD,
         style: {
-            layout: 'vertical',
+            layout: 'horizontal',
             color: 'black',
             shape: 'rect',
             label: 'pay'
         },
-        fundingSource: paypal.FUNDING.CARD,
         createOrder: function(data, actions) {
             return actions.order.create({
                 purchase_units: [{
@@ -145,13 +136,12 @@ function initializePayPalButtons() {
                 }]
             });
         },
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                showSuccess();
-            });
-        }
+        // ... rest of your PayPal button code
     }).render('#paypal-card-button');
 }
+
+// Initialize the buttons when the script loads
+initializePayPalButtons();
 
 function showSuccess() {
     const successDiv = document.getElementById('success-message');
