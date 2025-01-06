@@ -172,5 +172,25 @@
     <!-- Add Stripe script -->
     <script src="https://js.stripe.com/v3/"></script>
     <script src="assets/js/payment.js"></script>
+
+    <script>
+        const RENDER_URL = 'https://eatreal-backend.onrender.com'; // Replace with your actual Render URL
+
+        function initializePayPalButtons() {
+            paypal.Buttons({
+                // Your PayPal button configuration
+            }).render('#paypal-button-container');
+        }
+
+        fetch(`${RENDER_URL}/api/get-paypal-config`)
+            .then(response => response.json())
+            .then(config => {
+                const paypalScript = document.createElement('script');
+                paypalScript.src = `https://www.paypal.com/sdk/js?client-id=${config.clientId}`;
+                paypalScript.onload = initializePayPalButtons;
+                document.head.appendChild(paypalScript);
+            })
+            .catch(error => console.error('Error loading PayPal script:', error));
+    </script>
 </body>
 </html>

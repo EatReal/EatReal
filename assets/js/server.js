@@ -8,14 +8,6 @@ const mongoose = require('mongoose');
 const Customer = require('../../models/Customer');
 const app = express();
 
-// Debug logging for environment variables
-console.log('Environment Variables Check:');
-console.log('PAYPAL_CLIENT_ID:', process.env.PAYPAL_CLIENT_ID);
-console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Loaded' : 'Not Loaded');
-console.log('EMAIL_USER:', process.env.EMAIL_USER);
-console.log('EMAIL_PASSWORD length:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD.length : 0);
-console.log('EMAIL_PASSWORD first 4 chars:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD.substring(0, 4) : 'none');
-
 // Middleware
 app.use(express.static(path.join(__dirname, '../..'))); // Serve files from root directory
 app.use(express.json());
@@ -185,6 +177,10 @@ app.get('/api/customers', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch customers' });
     }
+});
+
+app.get('/api/get-paypal-config', (req, res) => {
+    res.json({ clientId: process.env.PAYPAL_CLIENT_ID });
 });
 
 // Start server
