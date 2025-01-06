@@ -49,7 +49,7 @@ const originalPrice = 14.99;
 
 // Find the existing Apply button and add click handler
 document.querySelector('.apply').addEventListener('click', function() {
-    const discountCode = document.querySelector('input[placeholder="Enter promo code"]').value.toUpperCase();
+    const discountCode = document.querySelector('input[placeholder="Enter promo code here"]').value.toUpperCase();
     
     if (discountCode === 'EATREAL20') {
         // Apply 20% discount
@@ -59,7 +59,7 @@ document.querySelector('.apply').addEventListener('click', function() {
         document.querySelector('.total-amount').textContent = `£${currentPrice}`;
         
         // Disable the input and button
-        document.querySelector('input[placeholder="Enter promo code"]').disabled = true;
+        document.querySelector('input[placeholder="Enter promo code here"]').disabled = true;
         document.querySelector('.apply').disabled = true;
         
         // Show success message
