@@ -3,17 +3,16 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-// Updated CORS configuration
+// More permissive CORS configuration
+app.use(cors());  // Allow all origins temporarily for testing
+
+// Or if you want to be more specific:
 app.use(cors({
-    origin: [
-        'http://127.0.0.1:5500',
-        'http://localhost:5500',
-        'https://eatreal.github.io',
-        'https://eatreal.co.uk'
-    ],
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Accept', 'Origin'],
-    credentials: false
+    origin: '*',  // Allow all origins
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'Origin', 'X-Requested-With'],
+    credentials: false,
+    maxAge: 86400  // Cache preflight requests for 24 hours
 }));
 
 app.use(express.json());
@@ -59,13 +58,14 @@ app.post('/api/store-customer', async (req, res) => {
 });
 
 app.get('/api/get-paypal-config', (req, res) => {
-    console.log('PayPal config requested from:', req.headers.origin);
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Origin, X-Requested-With');
     
     try {
         if (!process.env.PAYPAL_CLIENT_ID) {
             throw new Error('PayPal client ID not configured');
         }
-        
         res.json({ 
             clientId: process.env.PAYPAL_CLIENT_ID,
             environment: process.env.NODE_ENV || 'sandbox'
