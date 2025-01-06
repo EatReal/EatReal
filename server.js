@@ -82,6 +82,24 @@ app.use((req, res, next) => {
   next();
 });
 
+// Add this endpoint to validate discount codes
+app.post('/api/validate-discount', (req, res) => {
+    const { code } = req.body;
+    
+    if (code === 'EATREAL20') {
+        res.json({
+            valid: true,
+            discount: 20,
+            message: '20% discount applied!'
+        });
+    } else {
+        res.json({
+            valid: false,
+            message: 'Invalid discount code'
+        });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

@@ -44,6 +44,33 @@ fetch(`${RENDER_URL}/api/get-paypal-config`)
         }
     });
 
+let currentPrice = 14.99;
+const originalPrice = 14.99;
+
+function applyDiscount() {
+    const discountCode = document.getElementById('discountCode').value.toUpperCase();
+    const messageElement = document.getElementById('discountMessage');
+    
+    if (discountCode === 'EATREAL20') {
+        // Apply 20% discount
+        currentPrice = (originalPrice * 0.8).toFixed(2);
+        messageElement.innerHTML = '<span style="color: green;">20% discount applied!</span>';
+        
+        // Update price display
+        document.querySelector('.price').textContent = `£${currentPrice}`;
+        
+        // Disable the input and button
+        document.getElementById('discountCode').disabled = true;
+        document.querySelector('.apply-button').disabled = true;
+        
+        // Reinitialize PayPal with new price
+        document.getElementById('paypal-button-container').innerHTML = '';
+        initializePayPalButtons();
+    } else {
+        messageElement.innerHTML = '<span style="color: red;">Invalid discount code</span>';
+    }
+}
+
 function initializePayPalButtons() {
     // Clear any existing buttons first
     document.getElementById('paypal-button-container').innerHTML = '';
@@ -68,8 +95,7 @@ function initializePayPalButtons() {
             return actions.order.create({
                 purchase_units: [{
                     amount: {
-                        value: '14.99',
-                        currency_code: 'GBP'
+                        value: currentPrice
                     }
                 }]
             });
@@ -114,8 +140,7 @@ function initializePayPalButtons() {
             return actions.order.create({
                 purchase_units: [{
                     amount: {
-                        value: '14.99',
-                        currency_code: 'GBP'
+                        value: currentPrice
                     }
                 }]
             });

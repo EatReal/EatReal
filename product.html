@@ -33,9 +33,9 @@
                             <span class="rating-count">4.7</span>
                         </div>
                     </div>
-                    <div class="price-section">
+                    <div class="price-container">
                         <span class="original-price">£34.99</span>
-                        <span class="current-price">£14.99</span>
+                        <span class="price">£14.99</span>
                     </div>
                 </div>
             </div>
@@ -137,6 +137,15 @@
                         <span class="total-amount">£14.99</span>
                     </div>
 
+                    <!-- Add this before the PayPal button -->
+                    <div class="discount-section">
+                        <div class="form-group">
+                            <input type="text" id="discountCode" placeholder="Enter promo code" class="discount-input">
+                            <button onclick="applyDiscount()" class="apply-button">Apply</button>
+                        </div>
+                        <div id="discountMessage"></div>
+                    </div>
+
                     <!-- PayPal Buttons -->
                     <div id="paypal-button-container"></div>
                     <div class="divider">or</div>
@@ -161,8 +170,10 @@
 
     <!-- Scripts -->
     <script src="assets/js/checkout.js"></script>
-    <script src="assets/js/payment.js"></script>
     <script src="assets/js/reviews.js"></script>
+    
+    <!-- Keep only ONE instance of payment.js -->
+    <script src="assets/js/payment.js"></script>
 
     <!-- Add these elements inside your form -->
     <div id="error-message" class="error-message" style="display: none;"></div>

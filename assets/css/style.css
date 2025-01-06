@@ -116,22 +116,25 @@ main {
 }
 
 .price-container {
-    margin-bottom: 16px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
 }
 
 .original-price {
-    display: inline-block;
-    font-size: 20px;
     color: #666;
     text-decoration: line-through;
-    margin-right: 12px;
+    font-size: 1em;
+    margin-right: 8px;
 }
 
 .price {
-    display: inline-block;
-    font-size: 24px;
-    font-weight: 600;
-    color: #111;
+    color: #000 !important;
+    font-size: 2em !important;
+    font-weight: bold;
+    line-height: 1;
 }
 
 /* Side Products Styles */
@@ -616,4 +619,57 @@ h2, h3 {
     background: #FDEECE;
     border-radius: 8px;
     min-height: calc(100vh - 40px); /* Account for margin */
+}
+
+/* Checkout page pricing */
+.checkout-price-container {
+    display: inline-flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.checkout-original-price {
+    color: #666;
+    text-decoration: line-through;
+    font-size: 1.2em;
+    margin-right: 8px;
+}
+
+.checkout-price {
+    color: #000;
+    font-size: 2em;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.discount-section {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.discount-input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 8px;
+    width: 150px;
+}
+
+.apply-button {
+    padding: 8px 16px;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.apply-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#discountMessage {
+    margin-top: 8px;
+    font-size: 0.9em;
 }
