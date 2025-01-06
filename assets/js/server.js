@@ -10,6 +10,8 @@ const app = express();
 
 // Debug logging for environment variables
 console.log('Environment Variables Check:');
+console.log('PAYPAL_CLIENT_ID:', process.env.PAYPAL_CLIENT_ID);
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Loaded' : 'Not Loaded');
 console.log('EMAIL_USER:', process.env.EMAIL_USER);
 console.log('EMAIL_PASSWORD length:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD.length : 0);
 console.log('EMAIL_PASSWORD first 4 chars:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD.substring(0, 4) : 'none');
