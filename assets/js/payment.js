@@ -1,48 +1,59 @@
 // Add console.log to verify script is loading
 console.log('Payment.js loaded');
-
 const RENDER_URL = 'https://eatreal-backend.onrender.com';
 
 // Add error handling and logging
-fetch(`${RENDER_URL}/api/get-paypal-config`)
-    .then(response => {
-        console.log('PayPal config response status:', response.status);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(config => {
-        console.log('PayPal config received, loading SDK...');
-        return new Promise((resolve, reject) => {
-            const paypalScript = document.createElement('script');
-            paypalScript.src = `https://www.paypal.com/sdk/js?client-id=${config.clientId}&currency=GBP`;
-            paypalScript.onload = () => {
-                console.log('PayPal SDK loaded successfully');
-                resolve();
-            };
-            paypalScript.onerror = () => {
-                reject(new Error('Failed to load PayPal SDK'));
-            };
-            document.head.appendChild(paypalScript);
-        });
-    })
-    .then(() => {
-        console.log('Initializing PayPal buttons...');
-        initializePayPalButtons();
-    })
-    .catch(error => {
-        console.error('Error in PayPal setup:', error);
-        const container = document.getElementById('paypal-button-container');
-        if (container) {
-            container.innerHTML = `
-                <div style="color: red; padding: 10px; text-align: center;">
-                    Payment system temporarily unavailable. Please try again later.<br>
-                    Error: ${error.message}
-                </div>
-            `;
-        }
+fetch(`${RENDER_URL}/api/get-paypal-config`, {
+    method: 'GET',
+    mode: 'cors',
+    headers: {
+        'Accept': 'application/json',
+        'Origin': 'https://eatreal.github.io'
+    }
+})
+.then(response => {
+    console.log('PayPal config response status:', response.status);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+})
+.then(config => {
+    console.log('PayPal config received, loading SDK...');
+    const paypalScript = document.createElement('script');
+    paypalScript.src = `https://www.paypal.com/sdk/js?client-id=${config.clientId}&currency=GBP`;
+    
+    return new Promise((resolve, reject) => {
+        paypalScript.onload = () => {
+            console.log('PayPal SDK loaded successfully');
+            resolve();
+        };
+        paypalScript.onerror = (err) => {
+            console.error('PayPal SDK failed to load:', err);
+            reject(new Error('Failed to load PayPal SDK'));
+        };
+        document.head.appendChild(paypalScript);
     });
+})
+.then(() => {
+    console.log('Initializing PayPal buttons...');
+    if (typeof paypal === 'undefined') {
+        throw new Error('PayPal SDK not loaded properly');
+    }
+    initializePayPalButtons();
+})
+.catch(error => {
+    console.error('Error in PayPal setup:', error);
+    const container = document.getElementById('paypal-button-container');
+    if (container) {
+        container.innerHTML = `
+            <div style="color: red; padding: 10px; text-align: center;">
+                Payment system temporarily unavailable. Please try again later.<br>
+                Error: ${error.message}
+            </div>
+        `;
+    }
+});
 
 function initializePayPalButtons() {
     // Clear any existing buttons first
