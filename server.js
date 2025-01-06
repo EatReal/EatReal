@@ -76,6 +76,12 @@ app.get('/api/get-paypal-config', (req, res) => {
     }
 });
 
+// Add this to your existing headers middleware
+app.use((req, res, next) => {
+  res.setHeader('X-Frame-Options', 'DENY');
+  next();
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

@@ -1,6 +1,5 @@
 // Add console.log to verify script is loading
 console.log('Payment.js loaded');
-const RENDER_URL = 'https://eatreal-backend.onrender.com';
 
 // Add error handling and logging
 fetch(`${RENDER_URL}/api/get-paypal-config`, {
