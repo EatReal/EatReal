@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="assets/css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://merchant.revolut.com/embed.js"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=test"></script>
 </head>
 <body>
     <div class="product-page">
@@ -118,29 +117,31 @@
             </div>
 
             <div class="checkout-container">
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" placeholder="Enter your email" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Discount Code</label>
-                    <div class="promo-input">
-                        <input type="text" placeholder="Enter promo code here">
-                        <button class="apply-btn">Apply</button>
+                <form id="purchase-form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
                     </div>
-                </div>
 
-                <div class="total-line">
-                    <span>Total :</span>
-                    <div class="dotted-line"></div>
-                    <span class="total-amount">£14.99</span>
-                </div>
+                    <div class="form-group">
+                        <label>Discount Code</label>
+                        <div class="promo-input">
+                            <input type="text" placeholder="Enter promo code here">
+                            <button type="button" class="apply-btn">Apply</button>
+                        </div>
+                    </div>
 
-                <!-- PayPal Buttons -->
-                <div id="paypal-button-container"></div>
-                <div class="divider">or</div>
-                <div id="paypal-card-button"></div>
+                    <div class="total-line">
+                        <span>Total :</span>
+                        <div class="dotted-line"></div>
+                        <span class="total-amount">£14.99</span>
+                    </div>
+
+                    <!-- PayPal Buttons -->
+                    <div id="paypal-button-container"></div>
+                    <div class="divider">or</div>
+                    <div id="paypal-card-button"></div>
+                </form>
             </div>
         </div>
     </div>
@@ -172,25 +173,5 @@
     <!-- Add Stripe script -->
     <script src="https://js.stripe.com/v3/"></script>
     <script src="assets/js/payment.js"></script>
-
-    <script>
-        const RENDER_URL = 'https://eatreal-backend.onrender.com'; // Replace with your actual Render URL
-
-        function initializePayPalButtons() {
-            paypal.Buttons({
-                // Your PayPal button configuration
-            }).render('#paypal-button-container');
-        }
-
-        fetch(`${RENDER_URL}/api/get-paypal-config`)
-            .then(response => response.json())
-            .then(config => {
-                const paypalScript = document.createElement('script');
-                paypalScript.src = `https://www.paypal.com/sdk/js?client-id=${config.clientId}`;
-                paypalScript.onload = initializePayPalButtons;
-                document.head.appendChild(paypalScript);
-            })
-            .catch(error => console.error('Error loading PayPal script:', error));
-    </script>
 </body>
 </html>
