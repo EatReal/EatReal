@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer List - Admin</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid #ddd; }
+        th { background-color: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <h1>Customer List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Purchase Date</th>
+                <th>Order ID</th>
+            </tr>
+        </thead>
+        <tbody id="customerList"></tbody>
+    </table>
+
+    <script>
+        const adminPassword = prompt('Enter admin password:');
+        
+        fetch('/api/customers', {
+            headers: {
+                'Authorization': adminPassword
+            }
+        })
+        .then(response => response.json())
+        .then(customers => {
+            const tbody = document.getElementById('customerList');
+            customers.forEach(customer => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${customer.email}</td>
+                    <td>${new Date(customer.purchaseDate).toLocaleString()}</td>
+                    <td>${customer.orderId}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => alert('Error loading customers: ' + error));
+    </script>
+</body>
+</html> 

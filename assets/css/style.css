@@ -1,0 +1,619 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #111;
+    background: #FDEECE;
+    padding: 40px 20px;
+    min-height: 100vh;
+    margin: 0;
+    padding-bottom: 10;
+    background-color: #FDEECE;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+header {
+    max-width: 600px;
+    margin: 0 auto 60px;
+    text-align: center;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 32px;
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #444;
+    margin-bottom: 24px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 32px;
+}
+
+.social-link {
+    color: #111;
+    text-decoration: none;
+    font-size: 24px;
+    transition: opacity 0.2s;
+}
+
+.social-link:hover {
+    opacity: 0.7;
+}
+
+/* Main Content Styles */
+main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.products-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 24px;
+}
+
+/* Featured Product Styles */
+.featured-product {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.featured-product:hover {
+    transform: translateY(-4px);
+}
+
+.featured-product h2 {
+    color: #111;
+}
+
+.featured-product p {
+    color: #666;
+}
+
+.featured-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.product-info {
+    padding: 24px;
+    text-align: center;
+}
+
+.price-container {
+    margin-bottom: 16px;
+}
+
+.original-price {
+    display: inline-block;
+    font-size: 20px;
+    color: #666;
+    text-decoration: line-through;
+    margin-right: 12px;
+}
+
+.price {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: 600;
+    color: #111;
+}
+
+/* Side Products Styles */
+.side-products {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.product-card h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.product-card p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.price {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.buy-button {
+    width: 100%;
+    padding: 12px;
+    background: #111;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.buy-button:hover {
+    background: #333;
+}
+
+.coming-soon-button {
+    width: 100%;
+    padding: 12px;
+    background: #666;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .products-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .side-products {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 16px;
+    }
+    
+    .product-card {
+        min-width: 280px;
+    }
+    
+    .featured-product {
+        order: -1;
+    }
+}
+
+/* Modal Styles */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    z-index: 1001;
+    min-width: 300px;
+    text-align: center;
+}
+
+.close-modal {
+    margin-top: 16px;
+    padding: 8px 16px;
+    background: #111;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Add these styles for the product page */
+.product-page {
+    flex: 1;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.product-content {
+    padding: 30px;
+    background: #FDEECE;
+}
+
+.back-link {
+    display: inline-block;
+    color: #666;
+    text-decoration: none;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+.product-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.product-image-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.product-image {
+    width: 600px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.product-title-section {
+    text-align: center;
+}
+
+.product-title-section h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #000;
+}
+
+.rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.stars {
+    color: #FFB800;
+    font-size: 20px;
+}
+
+.rating-count {
+    font-size: 20px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.price-section {
+    margin-top: 20px;
+}
+
+.original-price {
+    font-size: 24px;
+    color: #666;
+    text-decoration: line-through;
+    margin-right: 12px;
+}
+
+.current-price {
+    font-size: 32px;
+    font-weight: 600;
+    color: #000;
+}
+
+.description {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.description h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.features {
+    margin-top: 30px;
+    display: block;
+}
+
+.features h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.features ul {
+    list-style-type: none;
+    padding-left: 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.features li {
+    padding: 12px 0;
+    font-size: 18px;
+    display: block;
+    text-align: left;
+}
+
+.features li::before {
+    content: "→";
+    color: #8B4513;
+    font-size: 28px;
+    margin-right: 15px;
+    margin-left: 15px;
+    display: inline-block;
+}
+
+.reviews-section {
+    margin-bottom: 40px;
+}
+
+.reviews-section h2 {
+    font-size: 20px;
+    margin-bottom: 24px;
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.review {
+    background: #f8f9fe;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.review-stars {
+    color: #ffd700;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.reviewer-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e0e0ff;
+}
+
+.reviewer-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.review-text {
+    color: #4a4a4a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Responsive design for reviews */
+@media (max-width: 768px) {
+    .reviews-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-header {
+        flex-direction: column;
+    }
+
+    .product-image {
+        width: 400px;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 968px) {
+    .product-header {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .product-title-section {
+        text-align: center;
+    }
+
+    .product-title-section h1 {
+        font-size: 36px;
+    }
+
+    .rating {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-title-section h1 {
+        font-size: 28px;
+    }
+}
+
+/* Payment Icons Styling */
+.payment-icons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.payment-icon {
+    height: 24px;
+    width: auto;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.payment-icon:hover {
+    opacity: 1;
+}
+
+/* Update PayPal button styling */
+.paypal-btn {
+    width: 100%;
+    padding: 12px;
+    background: #FDEECE;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paypal-btn img {
+    height: 24px;
+    width: auto;
+}
+
+/* Update Google Pay styling */
+.gpay-logo {
+    height: 24px;
+    width: auto;
+}
+
+/* Update PayPal button styling */
+.paypal-button {
+    width: 100%;
+    padding: 12px;
+    background: #333;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paypal-logo {
+    height: 24px;
+    width: auto;
+}
+
+/* Divider styling */
+.divider {
+    text-align: center;
+    position: relative;
+    margin: 20px 0;
+    color: #666;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background: #ddd;
+}
+
+.divider::before { left: 0; }
+.divider::after { right: 0; }
+
+/* Payment form styling */
+#card-element {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  display: none;
+  color: #dc3545;
+  margin-bottom: 16px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+}
+
+.success-message {
+  display: none;
+  color: #28a745;
+  margin-bottom: 16px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #28a745;
+  border-radius: 4px;
+}
+
+/* Add this to your CSS file */
+h2, h3 {
+    position: relative; /* Ensure headers are positioned correctly */
+    z-index: 1; /* Bring headers above other content */
+    margin-top: 20px; /* Add some space above headers */
+}
+
+/* Optional: Style for the section to ensure clarity */
+.description, .reviews-section {
+    position: relative; /* Ensure sections are positioned correctly */
+    z-index: 0; /* Keep sections below headers */
+}
+
+.header {
+    position: relative; /* Ensure headers are positioned correctly */
+    z-index: 1; /* Bring headers above other content */
+    margin-top: 20px; /* Add some space above headers */
+}
+
+/* Ensure the checkout container fills the space */
+.checkout-container {
+    margin: 20px auto;
+    padding: 30px;
+    background: #FDEECE;
+    border-radius: 8px;
+    min-height: calc(100vh - 40px); /* Account for margin */
+}

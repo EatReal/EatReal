@@ -1,0 +1,13 @@
+{
+  "name": "eat-real",
+  "version": "1.0.0",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^10.0.0",
+    "express": "^4.21.2",
+    "fs": "^0.0.1-security",
+    "nodemailer": "^6.9.16",
+    "path": "^0.12.7",
+    "stripe": "^8.222.0"
+  }
+}

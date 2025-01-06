@@ -1,0 +1,140 @@
+/* Mobile Styles */
+@media (max-width: 768px) {
+    /* General Layout */
+    body {
+        padding: 20px 10px;
+    }
+
+    /* Header */
+    header {
+        padding: 20px 10px;
+    }
+
+    .logo {
+        width: 80px;
+        height: auto;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+        padding: 0 10px;
+    }
+
+    /* Products Layout */
+    .products-container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .side-products {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .featured-product {
+        width: 100%;
+        margin: 20px 0;
+    }
+
+    .product-card {
+        margin: 10px 0;
+    }
+
+    /* Product Page */
+    .product-page {
+        padding: 20px 10px;
+    }
+
+    .product-image {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .product-details {
+        padding: 20px 10px;
+    }
+
+    /* Reviews Section */
+    .reviews-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .review {
+        margin: 10px 0;
+    }
+
+    /* Checkout Section */
+    .checkout-container {
+        padding: 20px 15px;
+        margin: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    /* Modal */
+    .modal {
+        width: 90%;
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    /* Buttons */
+    .buy-button,
+    .coming-soon-button {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    /* Price Display */
+    .price-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .original-price {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 20px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+    }
+
+    .product-card h2 {
+        font-size: 18px;
+    }
+
+    .price {
+        font-size: 16px;
+    }
+}
+
+/* Ensure proper display on landscape mode */
+@media (max-height: 500px) and (orientation: landscape) {
+    .products-container {
+        margin-top: 10px;
+    }
+
+    header {
+        padding: 10px;
+    }
+
+    .logo {
+        width: 60px;
+    }
+}

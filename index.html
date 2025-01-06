@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="assets/images/EatRealLogo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eat Real</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <img src="assets/images/EatRealLogo.png" alt="Logo" class="logo"> <!-- Changed to PNG for transparency -->
+        <h1>Eat Real</h1>
+        <p class="subtitle">Transform your health through the power of natural, whole foods. Your journey to vitality begins here.</p>
+        <div class="social-links">
+            <a href="https://www.tiktok.com/@eat.real" target="_blank" class="social-link"><i class="fab fa-tiktok"></i></a>
+            <a href="mailto:eatreal47@gmail.com" class="social-link"><i class="far fa-envelope"></i></a>
+        </div>
+    </header>
+
+    <main>
+        <div class="products-container">
+            <!-- Left Side Products -->
+            <div class="side-products">
+                <div class="product-card">
+                    <h2>Meal Plans</h2>
+                    <p>Weekly meal plans designed for optimal nutrition and taste.</p>
+                    <span class="price">£4.99</span>
+                    <button class="coming-soon-button" disabled>Coming Soon!</button>
+                </div>
+
+                <div class="product-card">
+                    <h2>Recipe Collection</h2>
+                    <p>A curated collection of healthy, delicious recipes.</p>
+                    <span class="price">£4.99</span>
+                    <button class="coming-soon-button" disabled>Coming Soon!</button>
+                </div>
+            </div>
+
+            <!-- Main Product -->
+            <a href="product.html" class="featured-product">
+                <img src="assets/images/foodbible.png" alt="Food Bible" class="featured-image">
+                <div class="product-info">
+                    <h2>The Food Bible</h2>
+                    <p>Your comprehensive guide to understanding food and its impact on your body.</p>
+                    <div class="price-container">
+                        <span class="original-price">£34.99</span>
+                        <span class="price">£14.99</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Right Side Products -->
+            <div class="side-products">
+                <div class="product-card">
+                    <h2>Workout Plans</h2>
+                    <p>Effective workout routines designed to complement your nutrition journey.</p>
+                    <span class="price">£5.99</span>
+                    <button class="coming-soon-button" disabled>Coming Soon!</button>
+                </div>
+
+                <div class="product-card">
+                    <h2>Animal Based Diet Guide</h2>
+                    <p>Learn how to optimize your health with an animal-based approach.</p>
+                    <span class="price">£7.99</span>
+                    <button class="coming-soon-button" disabled>Coming Soon!</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay"></div>
+    <div class="modal">
+        <p id="modal-message"></p>
+        <button class="button close-modal">Close</button>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
