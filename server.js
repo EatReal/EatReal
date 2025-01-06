@@ -3,9 +3,14 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-// Enable CORS for all origins during development
+// Updated CORS configuration
 app.use(cors({
-    origin: '*', // Be more restrictive in production
+    origin: [
+        'http://localhost:5500',
+        'http://127.0.0.1:5500',
+        'https://eatreal.co.uk',
+        // Add any other domains you need
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Accept']
