@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const nodemailer = require('nodemailer');
 
 // More permissive CORS configuration
 app.use(cors());  // Allow all origins temporarily for testing
@@ -97,6 +98,46 @@ app.post('/api/validate-discount', (req, res) => {
             valid: false,
             message: 'Invalid discount code'
         });
+    }
+});
+
+// Add this email configuration
+const transporter = nodemailer.createTransport({
+    service: 'gmail',  // or your preferred email service
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+    }
+});
+
+// Add this new endpoint
+app.post('/api/send-purchase-email', async (req, res) => {
+    const { email } = req.body;
+    
+    console.log('Attempting to send email to:', email);
+    
+    try {
+        console.log('Email configuration:', {
+            from: process.env.EMAIL_USER,
+            to: email
+        });
+        
+        const info = await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Your Food Bible Purchase',
+            html: `
+                <h1>Thank you for purchasing The Food Bible!</h1>
+                <p>Your download should begin automatically. If it doesn't, please click the link below:</p>
+                <a href="${process.env.DOWNLOAD_URL}">Download The Food Bible</a>
+            `
+        });
+        
+        console.log('Email sent successfully:', info);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Detailed email error:', error);
+        res.status(500).json({ error: 'Failed to send email', details: error.message });
     }
 });
 
