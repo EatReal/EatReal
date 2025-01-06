@@ -5,12 +5,14 @@ const RENDER_URL = 'https://eatreal-backend.onrender.com';
 // Initialize PayPal
 async function initializePayPal() {
     try {
-        // First try to get the PayPal config from the server
+        // First try to get the PayPal config from the server with updated CORS headers
         const response = await fetch(`${RENDER_URL}/api/get-paypal-config`, {
             method: 'GET',
+            mode: 'cors', // Explicitly set CORS mode
+            credentials: 'omit', // Don't send credentials
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Origin': 'http://127.0.0.1:5500'
             }
         });
 
@@ -19,7 +21,11 @@ async function initializePayPal() {
         }
 
         const config = await response.json();
-        console.log('PayPal config received');
+        console.log('PayPal config received:', config);
+
+        if (!config.clientId) {
+            throw new Error('No PayPal client ID received');
+        }
 
         // Load the PayPal SDK
         const paypalScript = document.createElement('script');
@@ -28,12 +34,17 @@ async function initializePayPal() {
         
         // Wait for the script to load
         await new Promise((resolve, reject) => {
-            paypalScript.onload = resolve;
-            paypalScript.onerror = reject;
+            paypalScript.onload = () => {
+                console.log('PayPal SDK loaded successfully');
+                resolve();
+            };
+            paypalScript.onerror = (err) => {
+                console.error('PayPal SDK failed to load:', err);
+                reject(err);
+            };
             document.head.appendChild(paypalScript);
         });
 
-        console.log('PayPal SDK loaded successfully');
         initializePayPalButtons();
 
     } catch (error) {
@@ -42,7 +53,8 @@ async function initializePayPal() {
         if (container) {
             container.innerHTML = `
                 <div style="color: red; padding: 10px; text-align: center;">
-                    Payment system temporarily unavailable. Please try again later.
+                    Payment system temporarily unavailable. Please try again later.<br>
+                    Error: ${error.message}
                 </div>
             `;
         }

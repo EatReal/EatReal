@@ -5,15 +5,10 @@ const app = express();
 
 // Updated CORS configuration
 app.use(cors({
-    origin: [
-        'http://localhost:5500',
-        'http://127.0.0.1:5500',
-        'https://eatreal.co.uk',
-        // Add any other domains you need
-    ],
-    methods: ['GET', 'POST'],
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Accept']
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'https://eatreal.co.uk'],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'Origin'],
+    credentials: false
 }));
 
 app.use(express.json());
@@ -59,11 +54,13 @@ app.post('/api/store-customer', async (req, res) => {
 });
 
 app.get('/api/get-paypal-config', (req, res) => {
-    // Add proper error handling
+    console.log('PayPal config requested from:', req.headers.origin);
+    
     try {
         if (!process.env.PAYPAL_CLIENT_ID) {
             throw new Error('PayPal client ID not configured');
         }
+        
         res.json({ 
             clientId: process.env.PAYPAL_CLIENT_ID,
             environment: process.env.NODE_ENV || 'sandbox'
