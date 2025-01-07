@@ -103,9 +103,13 @@ function initializePayPalButtons() {
 
     // Common order handling function
     const handleOrderSuccess = function(data, actions) {
+        console.log('Payment successful, starting order handling...');
         return actions.order.capture().then(function(details) {
+            console.log('Order captured, details:', details);
+            
             // Get email from input
             const email = document.querySelector('input[type="email"]').value;
+            console.log('Customer email:', email);
             
             // Show loading state
             const successDiv = document.getElementById('success-message');
@@ -113,6 +117,7 @@ function initializePayPalButtons() {
             successDiv.textContent = 'Processing your purchase...';
             
             // Send email
+            console.log('Sending email request to:', `${RENDER_URL}/api/send-purchase-email`);
             fetch(`${RENDER_URL}/api/send-purchase-email`, {
                 method: 'POST',
                 headers: {
@@ -120,8 +125,12 @@ function initializePayPalButtons() {
                 },
                 body: JSON.stringify({ email })
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Email API response:', response);
+                return response.json();
+            })
             .then(data => {
+                console.log('Email API data:', data);
                 if (data.success) {
                     showSuccess();
                     triggerDownload();
@@ -130,7 +139,7 @@ function initializePayPalButtons() {
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error in email process:', error);
                 successDiv.textContent = 'Purchase successful but email delivery failed. Please contact support.';
             });
         });
@@ -146,6 +155,7 @@ function initializePayPalButtons() {
             label: 'paypal'
         },
         createOrder: function(data, actions) {
+            console.log('Creating PayPal order...');
             return actions.order.create({
                 purchase_units: [{
                     amount: {
@@ -154,7 +164,13 @@ function initializePayPalButtons() {
                 }]
             });
         },
-        onApprove: handleOrderSuccess
+        onApprove: handleOrderSuccess,
+        onError: function(err) {
+            console.error('PayPal error:', err);
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = 'Payment failed. Please try again.';
+        }
     }).render('#paypal-primary-button');
 
     // Render card button
@@ -167,6 +183,7 @@ function initializePayPalButtons() {
             label: 'pay'
         },
         createOrder: function(data, actions) {
+            console.log('Creating card order...');
             return actions.order.create({
                 purchase_units: [{
                     amount: {
@@ -175,7 +192,13 @@ function initializePayPalButtons() {
                 }]
             });
         },
-        onApprove: handleOrderSuccess
+        onApprove: handleOrderSuccess,
+        onError: function(err) {
+            console.error('Card payment error:', err);
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = 'Payment failed. Please try again.';
+        }
     }).render('#paypal-card-button');
 }
 
@@ -183,6 +206,7 @@ function initializePayPalButtons() {
 initializePayPalButtons();
 
 function showSuccess() {
+    console.log('Showing success message...');
     const successDiv = document.getElementById('success-message');
     if (successDiv) {
         successDiv.style.display = 'block';
@@ -190,19 +214,21 @@ function showSuccess() {
         
         // Redirect to thank you page after a short delay
         setTimeout(() => {
+            console.log('Redirecting to thank you page...');
             window.location.href = 'thanks.html';
         }, 2000);
     }
 }
 
 function triggerDownload() {
+    console.log('Triggering download...');
     fetch(`${RENDER_URL}/api/download-pdf`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            email: document.getElementById('email').value
+            email: document.querySelector('input[type="email"]').value
         })
     })
     .then(response => response.blob())
@@ -210,10 +236,14 @@ function triggerDownload() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'The-Food-Bible.pdf';
+        a.download = 'FoodBible.pdf';
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+        console.log('Download initiated');
+    })
+    .catch(error => {
+        console.error('Download error:', error);
     });
 }
