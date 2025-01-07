@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 const nodemailer = require('nodemailer');
 const path = require('path');
+const fs = require('fs');
 
 // More permissive CORS configuration
 app.use(cors());  // Allow all origins temporarily for testing
@@ -25,6 +26,11 @@ const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 const MONGODB_URI = process.env.MONGODB_URI;
 const EMAIL_USER = process.env.EMAIL_USER;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
+
+// Update the PDF file path to use the correct directory structure
+const PDF_PATH = process.env.NODE_ENV === 'production' 
+    ? path.join(process.cwd(), 'assets', 'products', 'FoodBible.pdf')
+    : path.join(__dirname, 'assets', 'products', 'FoodBible.pdf');
 
 // PayPal endpoint
 app.post('/api/create-payment', async (req, res) => {
@@ -116,12 +122,15 @@ app.post('/api/send-purchase-email', async (req, res) => {
     const { email } = req.body;
     
     console.log('Attempting to send email to:', email);
+    console.log('PDF path:', PDF_PATH);
     
     try {
         // Verify file exists before attempting to send
-        const filePath = path.join(__dirname, 'assets', 'products', 'FoodBible.pdf');
-        if (!require('fs').existsSync(filePath)) {
-            throw new Error('PDF file not found at: ' + filePath);
+        if (!fs.existsSync(PDF_PATH)) {
+            // Log all files in the directory for debugging
+            const dir = path.dirname(PDF_PATH);
+            console.log('Directory contents:', fs.readdirSync(dir));
+            throw new Error('PDF file not found at: ' + PDF_PATH);
         }
 
         const info = await transporter.sendMail({
@@ -167,8 +176,8 @@ app.post('/api/send-purchase-email', async (req, res) => {
                 </div>
             `,
             attachments: [{
-                filename: 'FoodBible.pdf',
-                path: filePath
+                filename: 'The-Food-Bible.pdf',
+                path: PDF_PATH
             }]
         });
         
@@ -176,11 +185,12 @@ app.post('/api/send-purchase-email', async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Detailed email error:', error);
-        // Send more detailed error information
         res.status(500).json({ 
             error: 'Failed to send email', 
             details: error.message,
-            path: path.join(__dirname, 'assets', 'products', 'FoodBible.pdf')
+            path: PDF_PATH,
+            cwd: process.cwd(),
+            dirname: __dirname
         });
     }
 });
@@ -188,13 +198,10 @@ app.post('/api/send-purchase-email', async (req, res) => {
 // Add this endpoint to serve the PDF
 app.post('/api/download-pdf', (req, res) => {
     try {
-        const filePath = path.join(__dirname, 'assets', 'products', 'FoodBible.pdf');
-        res.download(filePath, 'FoodBible.pdf', (err) => {
-            if (err) {
-                console.error('Download error:', err);
-                res.status(500).send('Error downloading file');
-            }
-        });
+        if (!fs.existsSync(PDF_PATH)) {
+            throw new Error('PDF file not found');
+        }
+        res.download(PDF_PATH, 'FoodBible.pdf');
     } catch (error) {
         console.error('Download error:', error);
         res.status(500).send('Error downloading file');
