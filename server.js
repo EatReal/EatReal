@@ -118,9 +118,8 @@ app.post('/api/send-purchase-email', async (req, res) => {
     console.log('Attempting to send email to:', email);
     
     try {
+        // Verify file exists before attempting to send
         const filePath = path.join(__dirname, 'assets', 'products', 'FoodBible.pdf');
-        
-        // First verify the file exists
         if (!require('fs').existsSync(filePath)) {
             throw new Error('PDF file not found at: ' + filePath);
         }
@@ -168,7 +167,7 @@ app.post('/api/send-purchase-email', async (req, res) => {
                 </div>
             `,
             attachments: [{
-                filename: 'The-Food-Bible.pdf',
+                filename: 'FoodBible.pdf',
                 path: filePath
             }]
         });
@@ -177,7 +176,12 @@ app.post('/api/send-purchase-email', async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Detailed email error:', error);
-        res.status(500).json({ error: 'Failed to send email', details: error.message });
+        // Send more detailed error information
+        res.status(500).json({ 
+            error: 'Failed to send email', 
+            details: error.message,
+            path: path.join(__dirname, 'assets', 'products', 'FoodBible.pdf')
+        });
     }
 });
 
