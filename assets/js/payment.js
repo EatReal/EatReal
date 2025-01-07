@@ -101,6 +101,41 @@ function initializePayPalButtons() {
     mainContainer.appendChild(orSeparator);  // Only one "or" separator
     mainContainer.appendChild(cardContainer);
 
+    // Common order handling function
+    const handleOrderSuccess = function(data, actions) {
+        return actions.order.capture().then(function(details) {
+            // Get email from input
+            const email = document.querySelector('input[type="email"]').value;
+            
+            // Show loading state
+            const successDiv = document.getElementById('success-message');
+            successDiv.style.display = 'block';
+            successDiv.textContent = 'Processing your purchase...';
+            
+            // Send email
+            fetch(`${RENDER_URL}/api/send-purchase-email`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess();
+                    triggerDownload();
+                } else {
+                    throw new Error('Failed to send email');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                successDiv.textContent = 'Purchase successful but email delivery failed. Please contact support.';
+            });
+        });
+    };
+
     // Render PayPal button
     paypal.Buttons({
         fundingSource: paypal.FUNDING.PAYPAL,
@@ -119,39 +154,7 @@ function initializePayPalButtons() {
                 }]
             });
         },
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                // Get email from input
-                const email = document.querySelector('input[type="email"]').value;
-                
-                // Show loading state
-                const successDiv = document.getElementById('success-message');
-                successDiv.style.display = 'block';
-                successDiv.textContent = 'Processing your purchase...';
-                
-                // Send email
-                fetch(`${RENDER_URL}/api/send-purchase-email`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showSuccess();
-                        triggerDownload();
-                    } else {
-                        throw new Error('Failed to send email');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    successDiv.textContent = 'Purchase successful but email delivery failed. Please contact support.';
-                });
-            });
-        }
+        onApprove: handleOrderSuccess
     }).render('#paypal-primary-button');
 
     // Render card button
@@ -172,7 +175,7 @@ function initializePayPalButtons() {
                 }]
             });
         },
-        // ... rest of your PayPal button code
+        onApprove: handleOrderSuccess
     }).render('#paypal-card-button');
 }
 
