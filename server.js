@@ -118,20 +118,59 @@ app.post('/api/send-purchase-email', async (req, res) => {
     console.log('Attempting to send email to:', email);
     
     try {
-        console.log('Email configuration:', {
-            from: process.env.EMAIL_USER,
-            to: email
-        });
+        const filePath = path.join(__dirname, 'assets', 'products', 'FoodBible.pdf');
         
+        // First verify the file exists
+        if (!require('fs').existsSync(filePath)) {
+            throw new Error('PDF file not found at: ' + filePath);
+        }
+
         const info = await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: email,
-            subject: 'Your Food Bible Purchase',
+            subject: 'Welcome to Your Health Journey - The Food Bible',
             html: `
-                <h1>Thank you for purchasing The Food Bible!</h1>
-                <p>Your download should begin automatically.</p>
-                <p>If you have any issues, please contact our support team.</p>
-            `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <h1 style="color: #8B4513; text-align: center;">Thank You for Purchasing The Food Bible!</h1>
+                    
+                    <p>Dear Health Enthusiast,</p>
+                    
+                    <p>Thank you for taking the first step towards a healthier, more vibrant you! We're truly excited to be part of your wellness journey.</p>
+                    
+                    <p>Your copy of The Food Bible is attached to this email. This comprehensive guide is designed to transform your relationship with food and help you make informed, healthy choices every day.</p>
+                    
+                    <h2 style="color: #8B4513; margin-top: 20px;">Getting Started:</h2>
+                    <ul>
+                        <li>Save the attached PDF in a convenient location</li>
+                        <li>Take some time to browse through the contents</li>
+                        <li>Start with the sections that interest you most</li>
+                        <li>Remember, small changes lead to big results!</li>
+                    </ul>
+
+                    <h2 style="color: #8B4513; margin-top: 20px;">Need Help?</h2>
+                    <p>If you have any issues with the attachment or have any questions, please don't hesitate to contact us at <a href="mailto:eatreal47@gmail.com">eatreal47@gmail.com</a></p>
+
+                    <div style="background-color: #FDEECE; padding: 15px; margin-top: 20px; border-radius: 5px;">
+                        <p style="margin: 0;"><strong>Quick Tip:</strong> Start by reading our "Getting Started" chapter to make the most of your Food Bible journey!</p>
+                    </div>
+
+                    <p style="margin-top: 20px;">Remember, investing in your health is the best decision you can make. We're here to support you every step of the way!</p>
+
+                    <p>Here's to your health,<br>
+                    The Eat Real Team</p>
+                    
+                    <hr style="border: 1px solid #FDEECE; margin: 20px 0;">
+                    
+                    <p style="font-size: 12px; color: #666; text-align: center;">
+                        If you have any questions or need support, please contact us at:<br>
+                        <a href="mailto:eatreal47@gmail.com">eatreal47@gmail.com</a>
+                    </p>
+                </div>
+            `,
+            attachments: [{
+                filename: 'The-Food-Bible.pdf',
+                path: filePath
+            }]
         });
         
         console.log('Email sent successfully:', info);
