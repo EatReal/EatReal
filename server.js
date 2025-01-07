@@ -108,9 +108,9 @@ app.post('/api/validate-discount', (req, res) => {
     }
 });
 
-// Add this email configuration
+// Update the transporter configuration
 const transporter = nodemailer.createTransport({
-    service: 'gmail',  // or your preferred email service
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
@@ -125,20 +125,24 @@ app.post('/api/send-purchase-email', async (req, res) => {
     console.log('PDF path:', PDF_PATH);
     
     try {
-        // Verify file exists before attempting to send
         if (!fs.existsSync(PDF_PATH)) {
-            // Log all files in the directory for debugging
             const dir = path.dirname(PDF_PATH);
             console.log('Directory contents:', fs.readdirSync(dir));
             throw new Error('PDF file not found at: ' + PDF_PATH);
         }
 
         const info = await transporter.sendMail({
-            from: process.env.EMAIL_USER,
+            from: {
+                name: 'Eat Real',
+                address: process.env.EMAIL_USER
+            },
             to: email,
             subject: 'Welcome to Your Health Journey - The Food Bible',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="cid:logo" alt="Eat Real Logo" style="width: 120px; height: auto;">
+                    </div>
                     <h1 style="color: #8B4513; text-align: center;">Thank You for Purchasing The Food Bible!</h1>
                     
                     <p>Dear Health Enthusiast,</p>
@@ -158,10 +162,6 @@ app.post('/api/send-purchase-email', async (req, res) => {
                     <h2 style="color: #8B4513; margin-top: 20px;">Need Help?</h2>
                     <p>If you have any issues with the attachment or have any questions, please don't hesitate to contact us at <a href="mailto:eatreal47@gmail.com">eatreal47@gmail.com</a></p>
 
-                    <div style="background-color: #FDEECE; padding: 15px; margin-top: 20px; border-radius: 5px;">
-                        <p style="margin: 0;"><strong>Quick Tip:</strong> Start by reading our "Getting Started" chapter to make the most of your Food Bible journey!</p>
-                    </div>
-
                     <p style="margin-top: 20px;">Remember, investing in your health is the best decision you can make. We're here to support you every step of the way!</p>
 
                     <p>Here's to your health,<br>
@@ -175,10 +175,17 @@ app.post('/api/send-purchase-email', async (req, res) => {
                     </p>
                 </div>
             `,
-            attachments: [{
-                filename: 'The-Food-Bible.pdf',
-                path: PDF_PATH
-            }]
+            attachments: [
+                {
+                    filename: 'The-Food-Bible.pdf',
+                    path: PDF_PATH
+                },
+                {
+                    filename: 'EatRealLogo.png',
+                    path: path.join(__dirname, 'assets', 'images', 'EatRealLogo.png'),
+                    cid: 'logo' // Same as in the image src above
+                }
+            ]
         });
         
         console.log('Email sent successfully:', info);
