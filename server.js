@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const nodemailer = require('nodemailer');
+const path = require('path');
 
 // More permissive CORS configuration
 app.use(cors());  // Allow all origins temporarily for testing
@@ -128,8 +129,8 @@ app.post('/api/send-purchase-email', async (req, res) => {
             subject: 'Your Food Bible Purchase',
             html: `
                 <h1>Thank you for purchasing The Food Bible!</h1>
-                <p>Your download should begin automatically. If it doesn't, please click the link below:</p>
-                <a href="${process.env.DOWNLOAD_URL}">Download The Food Bible</a>
+                <p>Your download should begin automatically.</p>
+                <p>If you have any issues, please contact our support team.</p>
             `
         });
         
@@ -139,6 +140,33 @@ app.post('/api/send-purchase-email', async (req, res) => {
         console.error('Detailed email error:', error);
         res.status(500).json({ error: 'Failed to send email', details: error.message });
     }
+});
+
+// Add this endpoint to serve the PDF
+app.post('/api/download-pdf', (req, res) => {
+    try {
+        const filePath = path.join(__dirname, 'assets', 'products', 'FoodBible.pdf');
+        res.download(filePath, 'FoodBible.pdf', (err) => {
+            if (err) {
+                console.error('Download error:', err);
+                res.status(500).send('Error downloading file');
+            }
+        });
+    } catch (error) {
+        console.error('Download error:', error);
+        res.status(500).send('Error downloading file');
+    }
+});
+
+// Temporary debug endpoint - REMOVE AFTER TESTING
+app.get('/debug-file', (req, res) => {
+    const filePath = path.join(__dirname, 'assets', 'products', 'FoodBible.pdf');
+    const exists = require('fs').existsSync(filePath);
+    res.json({ 
+        exists, 
+        path: filePath,
+        dirname: __dirname 
+    });
 });
 
 const PORT = process.env.PORT || 3000;

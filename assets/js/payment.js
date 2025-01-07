@@ -54,23 +54,27 @@ document.querySelector('.apply').addEventListener('click', function() {
     if (discountCode === 'EATREAL20') {
         // Apply 20% discount
         currentPrice = (originalPrice * 0.8).toFixed(2);
-        
-        // Update total price display
-        document.querySelector('.total-amount').textContent = `£${currentPrice}`;
-        
-        // Disable the input and button
-        document.querySelector('input[placeholder="Enter promo code here"]').disabled = true;
-        document.querySelector('.apply').disabled = true;
-        
-        // Show success message
-        alert('20% discount applied!');
-        
-        // Reinitialize PayPal with new price
-        document.getElementById('paypal-button-container').innerHTML = '';
-        initializePayPalButtons();
+    } else if (discountCode === 'TEST10P') {
+        // Test discount - sets price to 0.10
+        currentPrice = 0.10;
     } else {
         alert('Invalid discount code');
+        return;
     }
+    
+    // Update total price display
+    document.querySelector('.total-amount').textContent = `£${currentPrice}`;
+    
+    // Disable the input and button
+    document.querySelector('input[placeholder="Enter promo code here"]').disabled = true;
+    document.querySelector('.apply').disabled = true;
+    
+    // Show success message
+    alert('Discount applied!');
+    
+    // Reinitialize PayPal with new price
+    document.getElementById('paypal-button-container').innerHTML = '';
+    initializePayPalButtons();
 });
 
 // PayPal button initialization
@@ -179,7 +183,12 @@ function showSuccess() {
     const successDiv = document.getElementById('success-message');
     if (successDiv) {
         successDiv.style.display = 'block';
-        successDiv.textContent = 'Thank you for your purchase! Your download will begin automatically, and we\'ve sent a copy to your email.';
+        successDiv.textContent = 'Thank you for your purchase! Your download will begin automatically.';
+        
+        // Redirect to thank you page after a short delay
+        setTimeout(() => {
+            window.location.href = 'thanks.html';
+        }, 2000);
     }
 }
 
