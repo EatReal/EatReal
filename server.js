@@ -66,21 +66,19 @@ app.post('/api/store-customer', async (req, res) => {
 });
 
 app.get('/api/get-paypal-config', (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Origin, X-Requested-With');
-    
+    console.log('PayPal config requested');
     try {
+        // Make sure PAYPAL_CLIENT_ID is in your .env file
         if (!process.env.PAYPAL_CLIENT_ID) {
             throw new Error('PayPal client ID not configured');
         }
-        res.json({ 
-            clientId: process.env.PAYPAL_CLIENT_ID,
-            environment: process.env.NODE_ENV || 'sandbox'
+        
+        res.json({
+            clientId: process.env.PAYPAL_CLIENT_ID
         });
     } catch (error) {
         console.error('PayPal config error:', error);
-        res.status(500).json({ error: 'Failed to load PayPal configuration' });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -224,6 +222,11 @@ app.get('/debug-file', (req, res) => {
         path: filePath,
         dirname: __dirname 
     });
+});
+
+// Add health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
 });
 
 const PORT = process.env.PORT || 3000;

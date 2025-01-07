@@ -3,6 +3,13 @@ console.log('Payment.js loaded');
 
 const RENDER_URL = 'https://eatreal-backend.onrender.com';
 
+document.getElementById('paypal-button-container').innerHTML = `
+    <div style="text-align: center; padding: 20px;">
+        <p>Loading payment options...</p>
+        <div class="loading-spinner"></div>
+    </div>
+`;
+
 // Get PayPal client ID from backend
 fetch(`${RENDER_URL}/api/get-paypal-config`)
     .then(response => {
