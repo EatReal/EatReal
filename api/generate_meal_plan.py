@@ -49,7 +49,7 @@ if not all([OPENAI_API_KEY, EMAIL_USERNAME, EMAIL_PASSWORD]):
 logger.debug(f"API Key loaded (first 5 chars): {OPENAI_API_KEY[:5] if OPENAI_API_KEY else 'None'}")
 
 # Make sure we're setting it for the openai client
-openai.api_key = OPENAI_API_KEY
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 # Define prompts
 targets_prompt = """
@@ -243,7 +243,7 @@ def get_openai_response(prompt, max_tokens=2000):
     """Helper function to get OpenAI API response with error handling"""
     try:
         logger.debug(f"Sending prompt to OpenAI (length: {len(prompt)})")
-        response = openai.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo-16k",
             messages=[
                 {"role": "system", "content": "You are a precise nutritionist. Respond only in the exact format requested."},
