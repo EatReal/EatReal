@@ -1,10 +1,21 @@
 services:
   - type: web
-    name: eatreal-backend
-    runtime: python3.9
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi:app --bind 0.0.0.0:10000
+    name: eatreal-frontend
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
     envVars:
+      - key: PORT
+        value: 10000
+
+  - type: web
+    name: eatreal-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m gunicorn api.generate_meal_plan:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
       - key: OPENAI_API_KEY
         sync: false
       - key: EMAIL_USERNAME
