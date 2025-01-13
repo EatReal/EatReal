@@ -67,14 +67,25 @@ Snacks: [meal] | P: [X]g, C: [X]g, F: [X]g
 """
 
 app = Flask(__name__)
-CORS(app)
+# Update CORS configuration to be more permissive
+CORS(app, resources={
+    r"/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'OPTIONS'])
 def health_check():
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "ok"}), 200
     return jsonify({"status": "healthy", "message": "API is running"})
 
-@app.route('/api/generate-meal-plan', methods=['POST'])
+@app.route('/api/generate-meal-plan', methods=['POST', 'OPTIONS'])
 def generate_meal_plan():
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "ok"}), 200
     try:
         data = request.json
         user_profile = data.get('userProfile', {})
