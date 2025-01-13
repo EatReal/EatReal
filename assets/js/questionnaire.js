@@ -1,3 +1,7 @@
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000'
+    : 'https://eatreal-backend.onrender.com';  // Replace with your actual deployed API URL
+
 console.log('Questionnaire.js loaded');
 
 class NutritionQuestionnaire {
@@ -448,7 +452,7 @@ Please provide:
             this.showLoadingScreen();
             const prompt = this.generatePromptForGPT();
             
-            const response = await fetch('http://localhost:5000/api/generate-meal-plan', {
+            const response = await fetch(`${API_URL}/api/generate-meal-plan`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
