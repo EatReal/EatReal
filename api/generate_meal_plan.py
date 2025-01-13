@@ -69,6 +69,10 @@ Snacks: [meal] | P: [X]g, C: [X]g, F: [X]g
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy", "message": "API is running"})
+
 @app.route('/api/generate-meal-plan', methods=['POST'])
 def generate_meal_plan():
     try:

@@ -455,7 +455,8 @@ Please provide:
             const response = await fetch(`${API_URL}/api/generate-meal-plan`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
                     prompt: prompt,
@@ -463,6 +464,10 @@ Please provide:
                     userProfile: this.answers
                 })
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
             const data = await response.json();
 
