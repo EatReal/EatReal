@@ -12,12 +12,17 @@ services:
     name: eatreal-backend2
     runtime: python
     buildCommand: |
+      python -m pip install --upgrade pip
       pip install -r requirements.txt
-      python -m pip install gunicorn
-    startCommand: gunicorn --chdir api generate_meal_plan:app
+      python debug.py
+    startCommand: |
+      python -c "import os; print('CWD:', os.getcwd()); print('Contents:', os.listdir('.'))"
+      gunicorn wsgi:app --bind 0.0.0.0:10000 --log-level debug
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
+      - key: PYTHONPATH
+        value: .
       - key: OPENAI_API_KEY
         sync: false
       - key: EMAIL_USERNAME
