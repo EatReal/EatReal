@@ -1,6 +1,8 @@
 const API_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:5000'
-    : 'https://eatreal-backend.onrender.com';  // Make sure this matches your Render URL exactly
+    : 'https://eatreal-backend2.onrender.com';  // Updated to new backend URL
+
+console.log('API URL configured as:', API_URL); // Debug log
 
 console.log('Questionnaire.js loaded');
 
