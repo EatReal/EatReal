@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:5000'
-    : 'https://eatreal-backend.onrender.com';  // Replace with your actual deployed API URL
+    : 'https://eatreal-backend.onrender.com';  // Make sure this matches your Render URL exactly
 
 console.log('Questionnaire.js loaded');
 
@@ -631,3 +631,42 @@ Please provide:
 document.addEventListener('DOMContentLoaded', () => {
     new NutritionQuestionnaire();
 }); 
+
+async function submitQuestionnaire(data) {
+    console.log('Starting submission...');
+    console.log('API URL:', API_URL);
+    console.log('Data being sent:', data);
+
+    try {
+        const response = await fetch(`${API_URL}/api/generate-meal-plan`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers));
+        
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+        
+        try {
+            const jsonResponse = JSON.parse(responseText);
+            console.log('Parsed response:', jsonResponse);
+            return jsonResponse;
+        } catch (e) {
+            console.error('JSON parse error:', e);
+            console.log('Non-JSON response received:', responseText);
+            throw new Error('Invalid JSON response');
+        }
+    } catch (error) {
+        console.error('Fetch error:', error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack
+        });
+        throw error;
+    }
+} 

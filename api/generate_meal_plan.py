@@ -9,6 +9,9 @@ from dotenv import find_dotenv, load_dotenv
 import logging
 import base64
 from email.utils import formataddr
+import traceback
+import sys
+import flask
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -84,12 +87,22 @@ def health_check():
 
 @app.route('/api/generate-meal-plan', methods=['POST', 'OPTIONS'])
 def generate_meal_plan():
+    logger.debug(f"Request received: {request.method}")
+    logger.debug(f"Request headers: {dict(request.headers)}")
+    
     if request.method == 'OPTIONS':
+        logger.debug("Handling OPTIONS request")
         return jsonify({"status": "ok"}), 200
+        
     try:
+        logger.debug(f"Request body: {request.get_data()}")
         data = request.json
+        logger.debug(f"Parsed JSON data: {data}")
+        
         user_profile = data.get('userProfile', {})
         user_email = data.get('email')
+        logger.debug(f"User profile: {user_profile}")
+        logger.debug(f"User email: {user_email}")
         
         # Generate each component separately with appropriate token limits
         daily_targets = get_openai_response(targets_prompt, max_tokens=500)
@@ -136,6 +149,7 @@ def generate_meal_plan():
 
     except Exception as e:
         logger.error(f"Error in generate_meal_plan: {str(e)}")
+        logger.error(f"Error traceback: {traceback.format_exc()}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/test', methods=['GET'])
@@ -647,6 +661,15 @@ def format_daily_targets(targets_text):
     except Exception as e:
         logger.error(f"Error formatting daily targets: {str(e)}")
         return "<p>Error formatting daily targets</p>"
+
+@app.route('/', methods=['GET'])
+def health_check():
+    logger.debug("Health check endpoint called")
+    return jsonify({
+        "status": "healthy",
+        "python_version": sys.version,
+        "flask_version": flask.__version__
+    })
 
 if __name__ == '__main__':
     # Verify environment before starting
