@@ -49,7 +49,7 @@ if not all([OPENAI_API_KEY, EMAIL_USERNAME, EMAIL_PASSWORD]):
 logger.debug(f"API Key loaded (first 5 chars): {OPENAI_API_KEY[:5] if OPENAI_API_KEY else 'None'}")
 
 # Make sure we're setting it for the openai client
-client = openai.OpenAI(api_key=OPENAI_API_KEY)
+client = openai.OpenAI()  # It will automatically use OPENAI_API_KEY from environment
 
 # Define prompts
 targets_prompt = """
