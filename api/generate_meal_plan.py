@@ -80,7 +80,7 @@ CORS(app, resources={
 })
 
 @app.route('/', methods=['GET', 'OPTIONS'])
-def health_check():
+def root():
     if request.method == 'OPTIONS':
         return jsonify({"status": "ok"}), 200
     return jsonify({"status": "healthy", "message": "API is running"})
@@ -661,15 +661,6 @@ def format_daily_targets(targets_text):
     except Exception as e:
         logger.error(f"Error formatting daily targets: {str(e)}")
         return "<p>Error formatting daily targets</p>"
-
-@app.route('/', methods=['GET'])
-def health_check():
-    logger.debug("Health check endpoint called")
-    return jsonify({
-        "status": "healthy",
-        "python_version": sys.version,
-        "flask_version": flask.__version__
-    })
 
 if __name__ == '__main__':
     # Verify environment before starting
