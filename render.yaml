@@ -11,8 +11,10 @@ services:
   - type: web
     name: eatreal-backend2
     runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn api.generate_meal_plan:app --bind 0.0.0.0:10000
+    buildCommand: |
+      pip install -r requirements.txt
+      python -m pip install gunicorn
+    startCommand: gunicorn --chdir api generate_meal_plan:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
