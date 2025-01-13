@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: eatreal-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn api.generate_meal_plan:app
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: EMAIL_USERNAME
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false 
