@@ -243,8 +243,8 @@ def get_openai_response(prompt, max_tokens=2000):
     """Helper function to get OpenAI API response with error handling"""
     try:
         logger.debug(f"Sending prompt to OpenAI (length: {len(prompt)})")
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",  # Using 16k model for longer responses
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo-16k",
             messages=[
                 {"role": "system", "content": "You are a precise nutritionist. Respond only in the exact format requested."},
                 {"role": "user", "content": prompt}
@@ -258,7 +258,7 @@ def get_openai_response(prompt, max_tokens=2000):
             logger.error("OpenAI API returned invalid response structure")
             return "Error: Invalid API response structure"
             
-        content = response.choices[0].message['content'].strip()
+        content = response.choices[0].message.content.strip()
         if not content:
             logger.error("OpenAI API returned empty content")
             return "Error: Empty response from API"
@@ -266,9 +266,6 @@ def get_openai_response(prompt, max_tokens=2000):
         logger.debug(f"Received response from OpenAI (length: {len(content)})")
         return content
         
-    except IndexError as e:
-        logger.error(f"IndexError in OpenAI response: {str(e)}")
-        return "Error: Failed to process API response"
     except Exception as e:
         logger.error(f"OpenAI API error: {str(e)}")
         return f"Error: {str(e)}"
