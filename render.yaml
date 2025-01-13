@@ -11,13 +11,8 @@ services:
   - type: web
     name: eatreal-backend2
     runtime: python
-    buildCommand: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
-      python debug.py
-    startCommand: |
-      python -c "import os; print('CWD:', os.getcwd()); print('Contents:', os.listdir('.'))"
-      gunicorn wsgi:app --bind 0.0.0.0:10000 --log-level debug
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --log-level debug
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
@@ -28,5 +23,4 @@ services:
       - key: EMAIL_USERNAME
         sync: false
       - key: EMAIL_PASSWORD
-        sync: false
-    plan: free 
+        sync: false 

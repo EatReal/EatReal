@@ -1,17 +1,10 @@
 import os
 import sys
-from debug import debug_info
 
-print("=== Starting WSGI initialization ===")
-debug_info()
+# Add the project root to Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-try:
-    from api.generate_meal_plan import app
-    print("Successfully imported app")
-except Exception as e:
-    print(f"Error importing app: {e}")
-    print(f"Python path: {sys.path}")
-    raise
+from api.generate_meal_plan import app
 
 if __name__ == "__main__":
     app.run() 
