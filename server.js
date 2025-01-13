@@ -229,6 +229,36 @@ app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
 
+// Add this new endpoint
+app.post('/api/submit-questionnaire', async (req, res) => {
+    try {
+        const { answers, emailContent } = req.body;
+        
+        // Send email with nutrition plan
+        await transporter.sendMail({
+            from: {
+                name: 'Eat Real',
+                address: process.env.EMAIL_USER
+            },
+            to: answers.email,
+            subject: 'Your Personalized Nutrition Plan - Eat Real',
+            html: emailContent,
+            attachments: [
+                {
+                    filename: 'EatRealLogo.png',
+                    path: path.join(__dirname, 'assets', 'images', 'EatRealLogo.png'),
+                    cid: 'logo'
+                }
+            ]
+        });
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Questionnaire submission error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

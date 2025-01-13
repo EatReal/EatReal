@@ -80,6 +80,26 @@ main {
     gap: 24px;
 }
 
+/* Add these styles while keeping all existing ones */
+.start-now-button {
+    width: 100%;
+    padding: 12px;
+    background: #45B26B;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.start-now-button:hover {
+    opacity: 0.9;
+}
+
 /* Featured Product Styles */
 .featured-product {
     background: white;
