@@ -485,20 +485,19 @@ def generate_html_email(daily_targets, meal_plan, grocery_list, prep_tips, user_
     """
 
 def get_base64_logo():
-    """Convert logo to base64 for email embedding"""
-    import os
-    import base64
-    
+    """Return the pre-encoded logo from file"""
     try:
-        # Get the absolute path to the logo
+        # Get the path to encoded_logo.txt in the same directory as this script
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.dirname(current_dir)
-        logo_path = os.path.join(project_root, 'assets', 'images', 'EatRealLogo.png')
+        logo_path = os.path.join(current_dir, 'encoded_logo.txt')
         
-        with open(logo_path, "rb") as image_file:
-            return base64.b64encode(image_file.read()).decode()
+        with open(logo_path, 'r') as file:
+            # Skip the variable assignment part and just get the string content
+            content = file.read()
+            encoded_logo = content.split("'''")[1]  # Extract string between triple quotes
+            return encoded_logo
     except Exception as e:
-        logger.error(f"Error loading logo: {str(e)}")
+        logger.error(f"Error loading encoded logo: {str(e)}")
         return ""
 
 def format_meal_plan(meal_plan_text):
