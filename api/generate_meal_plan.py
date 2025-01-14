@@ -208,6 +208,54 @@ def test_meal_plan():
         logger.error(f"Error in test_meal_plan: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
+@app.route('/test-email', methods=['GET'])
+def test_email():
+    test_data = {
+        'userProfile': {
+            'goal': 'weight_loss',
+            'gender': 'male',
+            'age': 30,
+            'height': 180,
+            'current_weight': 85,
+            'target_weight': 75,
+            'activity': 'moderate',
+            'diet_preference': 'omnivore',
+            'allergies': 'none',
+            'cooking_time': 'moderate',
+            'meal_prep': 'yes',
+        },
+        'email': 'test@example.com'
+    }
+    
+    try:
+        # Generate each component separately
+        daily_targets = get_openai_response(targets_prompt, max_tokens=500)
+        meal_plan = get_openai_response(create_personalized_prompt(test_data['userProfile']), max_tokens=2000)
+        grocery_list = get_openai_response(
+            f"Based on this meal plan:\n{meal_plan}\n\nCreate a categorized grocery list",
+            max_tokens=1000
+        )
+        prep_tips = get_openai_response(
+            "Create 5 specific meal prep tips for this meal plan. Format as numbered list.",
+            max_tokens=1000
+        )
+
+        # Generate the HTML email
+        html_content = generate_html_email(
+            daily_targets=daily_targets,
+            meal_plan=meal_plan,
+            grocery_list=grocery_list,
+            prep_tips=prep_tips,
+            user_profile=test_data['userProfile']
+        )
+
+        # Return the HTML directly to be displayed in browser
+        return html_content
+
+    except Exception as e:
+        logger.error(f"Error in test_email: {str(e)}")
+        return f"Error: {str(e)}", 500
+
 def create_personalized_prompt(user_profile):
     """Create a personalized prompt based on user profile"""
     return f"""
@@ -445,7 +493,7 @@ def generate_html_email(daily_targets, meal_plan, grocery_list, prep_tips, user_
     <body>
         <div class="container">
             <div class="header">
-                <img src="data:image/png;base64,{get_base64_logo()}" alt="Eat Real" class="logo">
+                <img src="data:image/png;base64,{get_base64_logo()}" alt="Eat Real" style="width: 120px; height: auto; margin-bottom: 20px;">
                 <h1>Your Personalized Nutrition Plan</h1>
             </div>
             
@@ -487,14 +535,14 @@ def generate_html_email(daily_targets, meal_plan, grocery_list, prep_tips, user_
 def get_base64_logo():
     """Return the pre-encoded logo from file"""
     try:
-        # Get the path to encoded_logo.txt in the same directory as this script
         current_dir = os.path.dirname(os.path.abspath(__file__))
         logo_path = os.path.join(current_dir, 'encoded_logo.txt')
         
         with open(logo_path, 'r') as file:
-            # Skip the variable assignment part and just get the string content
             content = file.read()
-            encoded_logo = content.split("'''")[1]  # Extract string between triple quotes
+            logger.debug("Reading encoded logo file")
+            encoded_logo = content.replace("ENCODED_LOGO = '''", "").replace("'''", "").strip()
+            logger.debug(f"Encoded logo length: {len(encoded_logo)}")
             return encoded_logo
     except Exception as e:
         logger.error(f"Error loading encoded logo: {str(e)}")
