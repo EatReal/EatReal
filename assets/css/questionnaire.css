@@ -16,7 +16,8 @@ body {
     width: 100%;
     max-width: 400px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-    margin-bottom: 40px;
+    margin: 0 auto 40px;
+    box-sizing: border-box;
 }
 
 .question-header {
@@ -459,5 +460,18 @@ body {
     
     .insight-popup:active {
         transform: translate(-50%, -50%) scale(0.98);
+    }
+}
+
+/* Add mobile-specific adjustments */
+@media (max-width: 480px) {
+    body {
+        padding: 20px 16px;
+    }
+
+    .questionnaire-card {
+        padding: 24px;
+        margin: 0 auto 20px;
+        width: calc(100% - 32px);
     }
 } 
