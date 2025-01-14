@@ -490,7 +490,6 @@ Please provide:
                 <h2>🎉 Success!</h2>
                 <p>Your personalized meal plan has been sent to your email.</p>
                 <p>Please check your inbox in the next few minutes.</p>
-                <a href="index.html" class="back-button">← Back to Home</a>
             </div>
         `;
     }

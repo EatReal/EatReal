@@ -493,15 +493,10 @@ def generate_html_email(daily_targets, meal_plan, grocery_list, prep_tips, user_
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <img src="data:image/png;base64,{get_base64_logo()}" alt="Eat Real" style="width: 120px; height: auto; margin-bottom: 20px;">
-                <h1>Your Personalized Nutrition Plan</h1>
-            </div>
-            
             <div class="content">
                 <div class="intro-section">
                     <p>Welcome to your personalized nutrition journey! Based on your profile, we've created a meal plan that:</p>
-                    <p>🎯 Supports your <span class="highlight">weight loss goal</span> from {user_profile.get('current_weight')}kg to {user_profile.get('target_weight')}kg</p>
+                    <p>🎯 Supports your <span class="highlight">weight goal</span> from {user_profile.get('current_weight')}kg to {user_profile.get('target_weight')}kg</p>
                     <p>💪 Matches your <span class="highlight">{user_profile.get('activity').replace('_', ' ')}</span> activity level</p>
                     <p>🍽️ Follows your <span class="highlight">{user_profile.get('diet_preference').replace('_', ' ')}</span> dietary preference</p>
                     <p>⏰ Fits within your <span class="highlight">{user_profile.get('cooking_time')}</span> cooking time preference</p>
