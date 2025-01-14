@@ -219,20 +219,21 @@ body {
 
 /* Add these styles for the insight popup */
 .insight-popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: white;
-    border-radius: 16px;
     padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    transition: all 0.3s ease;
-    width: 280px;
-    position: fixed;
-    left: 20px;
-    top: 50px;
-    display: block !important;
-    visibility: visible !important;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    touch-action: none; /* Enables touch events for dragging */
+    user-select: none; /* Prevents text selection while dragging */
+    cursor: move;
+    min-width: 280px;
+    max-width: 90vw;
+    transform-origin: center center;
 }
 
 .insight-popup.active {
@@ -243,8 +244,9 @@ body {
 .insight-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
     margin-bottom: 16px;
+    cursor: move; /* Indicates draggable area */
 }
 
 .insight-icon {
@@ -408,4 +410,54 @@ body {
 
 .retry-button:hover {
     opacity: 0.9;
+}
+
+.close-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.close-button:hover {
+    opacity: 1;
+}
+
+.close-button::before,
+.close-button::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    background: #333;
+    transform-origin: center;
+}
+
+.close-button::before {
+    transform: rotate(45deg);
+}
+
+.close-button::after {
+    transform: rotate(-45deg);
+}
+
+/* Add touch feedback */
+@media (hover: none) {
+    .insight-popup {
+        transition: transform 0.2s ease;
+    }
+    
+    .insight-popup:active {
+        transform: translate(-50%, -50%) scale(0.98);
+    }
 } 

@@ -521,6 +521,7 @@ Please provide:
 
         const insightHTML = `
             <div class="insight-popup">
+                <button class="close-button" aria-label="Close insight"></button>
                 <div class="insight-header">
                     <span class="insight-icon">💡</span>
                     <h3>Your BMI Insight</h3>
@@ -553,6 +554,12 @@ Please provide:
         const popup = document.createElement('div');
         popup.innerHTML = insightHTML;
         insightContainer.appendChild(popup.firstElementChild);
+
+        // Add interactivity after the popup is added
+        const addedPopup = document.querySelector('.insight-popup');
+        if (addedPopup) {
+            this.makeInsightInteractive(addedPopup);
+        }
 
         // Add active class after a brief delay
         setTimeout(() => {
@@ -626,6 +633,87 @@ Please provide:
                 popup.remove();
             }, 300); // 300ms for fade animation
         }, 10000); // 10 seconds
+    }
+
+    // Add new method for interactivity
+    makeInsightInteractive(popup) {
+        let pos = { x: 0, y: 0 };
+        let scale = 1;
+        let isDragging = false;
+
+        // Close button functionality
+        const closeButton = popup.querySelector('.close-button');
+        closeButton.addEventListener('click', () => {
+            popup.style.opacity = '0';
+            setTimeout(() => popup.remove(), 300);
+        });
+
+        // Mouse drag functionality
+        popup.addEventListener('mousedown', initDrag);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDrag);
+
+        // Touch functionality
+        popup.addEventListener('touchstart', initDrag);
+        document.addEventListener('touchmove', drag);
+        document.addEventListener('touchend', stopDrag);
+
+        // Pinch zoom functionality
+        let initialDistance = 0;
+        
+        function getDistance(touches) {
+            return Math.hypot(
+                touches[0].clientX - touches[1].clientX,
+                touches[0].clientY - touches[1].clientY
+            );
+        }
+
+        popup.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialDistance = getDistance(e.touches);
+            }
+        });
+
+        popup.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = getDistance(e.touches);
+                const delta = currentDistance - initialDistance;
+                scale = Math.min(Math.max(scale + delta * 0.01, 0.5), 2);
+                popup.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                initialDistance = currentDistance;
+            }
+        });
+
+        function initDrag(e) {
+            e.preventDefault();
+            isDragging = true;
+            const event = e.touches ? e.touches[0] : e;
+            pos = {
+                x: event.clientX - popup.offsetLeft,
+                y: event.clientY - popup.offsetTop
+            };
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const event = e.touches ? e.touches[0] : e;
+            popup.style.left = `${event.clientX - pos.x}px`;
+            popup.style.top = `${event.clientY - pos.y}px`;
+            popup.style.transform = `scale(${scale})`;
+        }
+
+        function stopDrag() {
+            isDragging = false;
+        }
+
+        // Prevent default touch behaviors
+        popup.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     }
 }
 

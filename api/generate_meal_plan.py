@@ -12,6 +12,7 @@ from email.utils import formataddr
 import traceback
 import sys
 import flask
+from email.mime.image import MIMEImage
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -656,10 +657,38 @@ def send_email(user_email, html_content):
     try:
         msg = MIMEMultipart('alternative')
         msg['Subject'] = "Your Personalized Nutrition Plan"
-        msg['From'] = formataddr(("EatReal", EMAIL_USERNAME))
+        msg['From'] = formataddr(("Eat Real", EMAIL_USERNAME))
         msg['To'] = user_email
+
+        # Add the HTML content
         msg.attach(MIMEText(html_content, 'html'))
 
+        # Add logo as inline attachment
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        logo_path = os.path.join(current_dir, '..', 'assets', 'images', 'EatRealLogo.png')
+        
+        with open(logo_path, 'rb') as f:
+            img = MIMEImage(f.read())
+            img.add_header('Content-ID', '<logo>')
+            img.add_header('Content-Disposition', 'inline', filename='EatRealLogo.png')
+            msg.attach(img)
+
+        # Update the HTML template to use the inline image
+        html_template = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="cid:logo" alt="Eat Real Logo" style="width: 120px; height: auto;">
+                </div>
+                <h1 style="color: #8B4513; text-align: center;">Your Personalized Nutrition Plan</h1>
+                
+                <!-- Rest of your email content -->
+                {html_content}
+            </div>
+        """
+        
+        msg.attach(MIMEText(html_template, 'html'))
+
+        # Send the email
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
             server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
@@ -706,11 +735,31 @@ def format_daily_targets(targets_text):
         logger.error(f"Error formatting daily targets: {str(e)}")
         return "<p>Error formatting daily targets</p>"
 
+@app.route('/test-logo', methods=['GET'])
+def test_logo():
+    """Test endpoint just for logo rendering"""
+    try:
+        encoded_logo = get_base64_logo()
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Logo Test</title>
+        </head>
+        <body>
+            <h1>Logo Test</h1>
+            <img src="data:image/png;base64,{encoded_logo}" alt="Eat Real Logo" style="width: 120px;">
+            <pre style="word-wrap: break-word; white-space: pre-wrap;">
+                Base64 length: {len(encoded_logo)}
+                First 100 chars: {encoded_logo[:100]}
+            </pre>
+        </body>
+        </html>
+        """
+    except Exception as e:
+        return f"Error: {str(e)}", 500
+
 if __name__ == '__main__':
-    # Verify environment before starting
-    logger.info("Starting server with configuration:")
-    logger.info(f"OpenAI API Key present: {bool(OPENAI_API_KEY)}")
-    logger.info(f"Email username present: {bool(EMAIL_USERNAME)}")
-    logger.info(f"Email password present: {bool(EMAIL_PASSWORD)}")
-    
-    app.run(debug=False, port=5000)  # Set debug=False to prevent reloading 
+    # Add debug logging for startup
+    logger.info("Starting Flask server...")
+    app.run(debug=True, port=5000) 
