@@ -117,11 +117,11 @@ def generate_meal_plan():
         logger.debug(f"User email: {user_email}")
         
         # Generate each component separately with appropriate token limits
-        daily_targets = get_openai_response(targets_prompt, max_tokens=500)
+        daily_targets = get_openai_response(targets_prompt, max_tokens=500, user_profile=user_profile)
         if daily_targets.startswith('Error:'):
             return jsonify({"success": False, "error": daily_targets}), 500
 
-        meal_plan = get_openai_response(meal_plan_prompt, max_tokens=2000)
+        meal_plan = get_openai_response(meal_plan_prompt, max_tokens=2000, user_profile=user_profile)
         if meal_plan.startswith('Error:'):
             return jsonify({"success": False, "error": meal_plan}), 500
 
@@ -164,9 +164,51 @@ def generate_meal_plan():
         logger.error(f"Error traceback: {traceback.format_exc()}")
         return jsonify({"success": False, "error": str(e)}), 500
 
-def get_openai_response(prompt, max_tokens=2000):
+def get_openai_response(prompt, max_tokens=2000, user_profile=None):
     """Helper function to get OpenAI API response with error handling"""
     try:
+        # If user profile is provided, customize the prompt
+        if user_profile and "Create a 7-day meal plan" in prompt:
+            prompt = f"""
+Based on a profile of:
+- Goal: {user_profile.get('goal', '').replace('_', ' ')}
+- Gender: {user_profile.get('gender', '')}
+- Age: {user_profile.get('age', '')}
+- Height: {user_profile.get('height', '')}cm
+- Current Weight: {user_profile.get('current_weight', '')}kg
+- Target Weight: {user_profile.get('target_weight', '')}kg
+- Activity Level: {user_profile.get('activity', '').replace('_', ' ')}
+- Dietary Preference: {user_profile.get('diet_preference', '').replace('_', ' ')}
+- Allergies: {user_profile.get('allergies', '')}
+- Cooking Time: {user_profile.get('cooking_time', '')}
+- Meal Prep: {user_profile.get('meal_prep', '')}
+
+Create a 7-day meal plan with this exact format for each day:
+DAY [number]:
+Breakfast:
+[Introduction explaining why this meal was chosen specifically for their goals and dietary preferences]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Lunch:
+[Introduction explaining why this meal was chosen specifically for their goals and dietary preferences]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Dinner:
+[Introduction explaining why this meal was chosen specifically for their goals and dietary preferences]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Snacks:
+[Introduction explaining why this meal was chosen specifically for their goals and dietary preferences]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Make sure each meal:
+1. Supports their {user_profile.get('goal', '').replace('_', ' ')} goal
+2. Fits within their {user_profile.get('cooking_time', '')} cooking time preference
+3. Avoids any {user_profile.get('allergies', '')} allergens
+4. Matches their {user_profile.get('diet_preference', '').replace('_', ' ')} dietary preference
+5. Includes meal prep suggestions if they selected 'yes'
+"""
+
         logger.debug(f"Sending prompt to OpenAI (length: {len(prompt)})")
         response = client.chat.completions.create(
             model="gpt-3.5-turbo-16k",
