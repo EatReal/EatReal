@@ -350,7 +350,25 @@ class NutritionQuestionnaire {
                 macros.carbs = Math.round((calories * 0.45) / 4);  // 45% carbs
                 macros.fats = Math.round((calories * 0.2) / 9);    // 20% fats
                 break;
-            // ... other goals
+            case 'maintenance':
+                macros.protein = Math.round((calories * 0.3) / 4);  // 30% protein
+                macros.carbs = Math.round((calories * 0.4) / 4);   // 40% carbs
+                macros.fats = Math.round((calories * 0.3) / 9);    // 30% fats
+                break;
+            case 'endurance':
+                macros.protein = Math.round((calories * 0.25) / 4); // 25% protein
+                macros.carbs = Math.round((calories * 0.55) / 4);  // 55% carbs
+                macros.fats = Math.round((calories * 0.2) / 9);    // 20% fats
+                break;
+            case 'keto':
+                macros.protein = Math.round((calories * 0.25) / 4); // 25% protein
+                macros.carbs = Math.round((calories * 0.05) / 4);  // 5% carbs
+                macros.fats = Math.round((calories * 0.7) / 9);    // 70% fats
+                break;
+            default:
+                macros.protein = Math.round((calories * 0.3) / 4);  // 30% protein
+                macros.carbs = Math.round((calories * 0.4) / 4);   // 40% carbs
+                macros.fats = Math.round((calories * 0.3) / 9);    // 30% fats
         }
 
         return macros;
@@ -422,10 +440,36 @@ Please provide:
 2. A 7-day meal plan with breakfast, lunch, dinner, and snacks
 3. For each meal, include:
    - Recipe name
-   - Macronutrients
-   - Brief explanation of why this meal supports their goals
-4. Weekly grocery list
-5. Meal prep tips`;
+   - Introduction explaining why this meal was chosen (e.g., "This meal was selected because it provides essential protein and healthy fats needed for muscle recovery, while its complex carbohydrates offer sustained energy throughout the day.")
+   - Detailed macronutrients (Protein, Carbs, Fats in grams)
+   - How this specific meal supports their ${answers.goal.replace('_', ' ')} goal
+4. Weekly grocery list organized by category (Produce, Proteins, Pantry)
+5. Meal prep tips specific to their ${answers.cooking_time} cooking time preference
+
+Format each day as:
+DAY [number]:
+Breakfast:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Lunch:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Dinner:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Snacks:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Make sure each meal:
+1. Supports their ${answers.goal.replace('_', ' ')} goal
+2. Fits within their ${answers.cooking_time} cooking time preference
+3. Avoids any ${answers.allergies} allergens
+4. Matches their ${answers.diet_preference.replace('_', ' ')} dietary preference
+5. Includes meal prep suggestions if they selected 'yes'`;
     }
 
     showLoadingScreen() {
