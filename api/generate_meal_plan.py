@@ -64,10 +64,21 @@ FATS: [percentage]
 meal_plan_prompt = """
 Create a 7-day meal plan with this exact format for each day:
 DAY [number]:
-Breakfast: [meal] | P: [X]g, C: [X]g, F: [X]g
-Lunch: [meal] | P: [X]g, C: [X]g, F: [X]g
-Dinner: [meal] | P: [X]g, C: [X]g, F: [X]g
-Snacks: [meal] | P: [X]g, C: [X]g, F: [X]g
+Breakfast:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Lunch:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Dinner:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Snacks:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
 """
 
 app = Flask(__name__)
@@ -152,141 +163,6 @@ def generate_meal_plan():
         logger.error(f"Error in generate_meal_plan: {str(e)}")
         logger.error(f"Error traceback: {traceback.format_exc()}")
         return jsonify({"success": False, "error": str(e)}), 500
-
-@app.route('/test', methods=['GET'])
-def test_meal_plan():
-    test_data = {
-        'userProfile': {
-            'goal': 'weight_loss',
-            'gender': 'male',
-            'age': 30,
-            'height': 180,
-            'current_weight': 85,
-            'target_weight': 75,
-            'activity': 'moderate',
-            'diet_preference': 'omnivore',
-            'allergies': 'none',
-            'cooking_time': 'moderate',
-            'meal_prep': 'yes',
-        },
-        'email': 'j47fleming@gmail.com'
-    }
-    
-    try:
-        # Generate each component separately
-        daily_targets = get_openai_response(targets_prompt, max_tokens=500)
-        if daily_targets.startswith('Error:'):
-            return jsonify({"success": False, "error": daily_targets}), 500
-
-        meal_plan = get_openai_response(create_personalized_prompt(test_data['userProfile']), max_tokens=2000)
-        if meal_plan.startswith('Error:'):
-            return jsonify({"success": False, "error": meal_plan}), 500
-
-        grocery_list = get_openai_response(
-            f"Based on this meal plan:\n{meal_plan}\n\nCreate a categorized grocery list with quantities in this format:\n"
-            "PRODUCE:\n- [item] (quantity)\nPROTEINS:\n- [item] (quantity)\nPANTRY:\n- [item] (quantity)",
-            max_tokens=1000
-        )
-
-        prep_tips = get_openai_response(
-            "Create 5 specific meal prep tips for this meal plan. Format as numbered list.",
-            max_tokens=1000
-        )
-
-        # Pass user_profile to generate_html_email
-        html_content = generate_html_email(
-            daily_targets=daily_targets,
-            meal_plan=meal_plan,
-            grocery_list=grocery_list,
-            prep_tips=prep_tips,
-            user_profile=test_data['userProfile']
-        )
-
-        # For testing, return the HTML content directly instead of sending email
-        return html_content
-
-    except Exception as e:
-        logger.error(f"Error in test_meal_plan: {str(e)}")
-        return jsonify({"success": False, "error": str(e)}), 500
-
-@app.route('/test-email', methods=['GET'])
-def test_email():
-    test_data = {
-        'userProfile': {
-            'goal': 'weight_loss',
-            'gender': 'male',
-            'age': 30,
-            'height': 180,
-            'current_weight': 85,
-            'target_weight': 75,
-            'activity': 'moderate',
-            'diet_preference': 'omnivore',
-            'allergies': 'none',
-            'cooking_time': 'moderate',
-            'meal_prep': 'yes',
-        },
-        'email': 'test@example.com'
-    }
-    
-    try:
-        # Generate each component separately
-        daily_targets = get_openai_response(targets_prompt, max_tokens=500)
-        meal_plan = get_openai_response(create_personalized_prompt(test_data['userProfile']), max_tokens=2000)
-        grocery_list = get_openai_response(
-            f"Based on this meal plan:\n{meal_plan}\n\nCreate a categorized grocery list",
-            max_tokens=1000
-        )
-        prep_tips = get_openai_response(
-            "Create 5 specific meal prep tips for this meal plan. Format as numbered list.",
-            max_tokens=1000
-        )
-
-        # Generate the HTML email
-        html_content = generate_html_email(
-            daily_targets=daily_targets,
-            meal_plan=meal_plan,
-            grocery_list=grocery_list,
-            prep_tips=prep_tips,
-            user_profile=test_data['userProfile']
-        )
-
-        # Return the HTML directly to be displayed in browser
-        return html_content
-
-    except Exception as e:
-        logger.error(f"Error in test_email: {str(e)}")
-        return f"Error: {str(e)}", 500
-
-def create_personalized_prompt(user_profile):
-    """Create a personalized prompt based on user profile"""
-    return f"""
-Based on the following profile:
-- Goal: {user_profile.get('goal').replace('_', ' ')}
-- Gender: {user_profile.get('gender')}
-- Age: {user_profile.get('age')}
-- Height: {user_profile.get('height')}cm
-- Current Weight: {user_profile.get('current_weight')}kg
-- Target Weight: {user_profile.get('target_weight')}kg
-- Activity Level: {user_profile.get('activity').replace('_', ' ')}
-- Dietary Preference: {user_profile.get('diet_preference').replace('_', ' ')}
-- Allergies: {user_profile.get('allergies')}
-- Cooking Time: {user_profile.get('cooking_time')} per day
-- Meal Prep: {user_profile.get('meal_prep')}
-
-Create a 7-day meal plan that:
-1. Supports their weight loss journey from {user_profile.get('current_weight')}kg to {user_profile.get('target_weight')}kg
-2. Can be prepared within their {user_profile.get('cooking_time')} time preference
-3. Avoids any allergens ({user_profile.get('allergies')})
-4. Includes meal prep suggestions if they selected 'yes'
-5. Matches their {user_profile.get('diet_preference')} dietary preference
-
-Format each day exactly as:
-DAY [number]:
-Breakfast: [detailed meal] | P: [X]g, C: [X]g, F: [X]g
-Lunch: [detailed meal] | P: [X]g, C: [X]g, F: [X]g
-Dinner: [detailed meal] | P: [X]g, C: [X]g, F: [X]g
-Snacks: [detailed meal] | P: [X]g, C: [X]g, F: [X]g
-"""
 
 def get_openai_response(prompt, max_tokens=2000):
     """Helper function to get OpenAI API response with error handling"""
