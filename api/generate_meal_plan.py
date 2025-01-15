@@ -62,22 +62,23 @@ FATS: [percentage]
 """
 
 meal_plan_prompt = """
-Create a 7-day meal plan with this exact format for each day:
+Create a 7-day meal plan with this EXACT format for each day:
 DAY [number]:
+
 Breakfast:
-[Introduction explaining why this meal was chosen]
+[Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
 [meal] | P: [X]g, C: [X]g, F: [X]g
 
 Lunch:
-[Introduction explaining why this meal was chosen]
+[Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
 [meal] | P: [X]g, C: [X]g, F: [X]g
 
 Dinner:
-[Introduction explaining why this meal was chosen]
+[Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
 [meal] | P: [X]g, C: [X]g, F: [X]g
 
 Snacks:
-[Introduction explaining why this meal was chosen]
+[Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
 [meal] | P: [X]g, C: [X]g, F: [X]g
 """
 
@@ -121,7 +122,32 @@ def generate_meal_plan():
         if daily_targets.startswith('Error:'):
             return jsonify({"success": False, "error": daily_targets}), 500
 
-        meal_plan = get_openai_response(meal_plan_prompt, max_tokens=2000)
+        # Add user profile context to meal plan prompt
+        personalized_meal_plan_prompt = f"""
+Based on a profile of:
+- Goal: {user_profile.get('goal', '').replace('_', ' ')}
+- Gender: {user_profile.get('gender', '')}
+- Age: {user_profile.get('age', '')}
+- Height: {user_profile.get('height', '')}cm
+- Current Weight: {user_profile.get('current_weight', '')}kg
+- Target Weight: {user_profile.get('target_weight', '')}kg
+- Activity Level: {user_profile.get('activity', '').replace('_', ' ')}
+- Diet Preference: {user_profile.get('diet_preference', '').replace('_', ' ')}
+- Allergies: {user_profile.get('allergies', '')}
+- Cooking Time: {user_profile.get('cooking_time', '')}
+- Meal Prep: {user_profile.get('meal_prep', '')}
+
+{meal_plan_prompt}
+
+Make sure each meal:
+1. Supports their {user_profile.get('goal', '').replace('_', ' ')} goal
+2. Fits within their {user_profile.get('cooking_time', '')} cooking time preference
+3. Avoids any {user_profile.get('allergies', '')} allergens
+4. Matches their {user_profile.get('diet_preference', '').replace('_', ' ')} dietary preference
+5. Includes meal prep suggestions if they selected 'yes'
+"""
+
+        meal_plan = get_openai_response(personalized_meal_plan_prompt, max_tokens=2000)
         if meal_plan.startswith('Error:'):
             return jsonify({"success": False, "error": meal_plan}), 500
 
@@ -135,7 +161,7 @@ def generate_meal_plan():
         if grocery_list.startswith('Error:'):
             return jsonify({"success": False, "error": grocery_list}), 500
 
-        # Generate prep tips with truncated meal plan if necessary
+        # Generate prep tips
         prep_tips = get_openai_response(
             "Create 5 specific meal prep tips for this meal plan. "
             "Format each tip on a new line starting with a number. "
