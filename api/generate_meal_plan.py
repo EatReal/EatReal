@@ -61,6 +61,26 @@ CARBS: [percentage]
 FATS: [percentage]
 """
 
+meal_plan_prompt = """
+Create a 7-day meal plan with this exact format for each day:
+DAY [number]:
+Breakfast:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Lunch:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Dinner:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+
+Snacks:
+[Introduction explaining why this meal was chosen]
+[meal] | P: [X]g, C: [X]g, F: [X]g
+"""
+
 app = Flask(__name__)
 # Update CORS configuration to be more permissive
 CORS(app, resources={
@@ -97,11 +117,11 @@ def generate_meal_plan():
         logger.debug(f"User email: {user_email}")
         
         # Generate each component separately with appropriate token limits
-        daily_targets = get_openai_response(targets_prompt, max_tokens=500, user_profile=user_profile)
+        daily_targets = get_openai_response(targets_prompt, max_tokens=500)
         if daily_targets.startswith('Error:'):
             return jsonify({"success": False, "error": daily_targets}), 500
 
-        meal_plan = get_openai_response(targets_prompt, max_tokens=2000, user_profile=user_profile)
+        meal_plan = get_openai_response(meal_plan_prompt, max_tokens=2000)
         if meal_plan.startswith('Error:'):
             return jsonify({"success": False, "error": meal_plan}), 500
 
@@ -144,7 +164,7 @@ def generate_meal_plan():
         logger.error(f"Error traceback: {traceback.format_exc()}")
         return jsonify({"success": False, "error": str(e)}), 500
 
-def get_openai_response(prompt, max_tokens=2000, user_profile=None):
+def get_openai_response(prompt, max_tokens=2000):
     """Helper function to get OpenAI API response with error handling"""
     try:
         logger.debug(f"Sending prompt to OpenAI (length: {len(prompt)})")
@@ -158,7 +178,19 @@ def get_openai_response(prompt, max_tokens=2000, user_profile=None):
             max_tokens=max_tokens
         )
         
-        return response.choices[0].message.content.strip()
+        # Add error checking for the response
+        if not response or not hasattr(response, 'choices') or len(response.choices) == 0:
+            logger.error("OpenAI API returned invalid response structure")
+            return "Error: Invalid API response structure"
+            
+        content = response.choices[0].message.content.strip()
+        if not content:
+            logger.error("OpenAI API returned empty content")
+            return "Error: Empty response from API"
+            
+        logger.debug(f"Received response from OpenAI (length: {len(content)})")
+        return content
+        
     except Exception as e:
         logger.error(f"OpenAI API error: {str(e)}")
         return f"Error: {str(e)}"
