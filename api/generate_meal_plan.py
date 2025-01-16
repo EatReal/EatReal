@@ -155,13 +155,24 @@ Make sure each meal:
 5. Includes meal prep suggestions if they selected 'yes'
 """
 
-        meal_plan = get_openai_response(personalized_meal_plan_prompt, max_tokens=2000)
-        if meal_plan.startswith('Error:'):
-            return jsonify({"success": False, "error": meal_plan}), 500
+        # Generate meal plan
+        meal_plan_response = client.chat.completions.create(
+            model="gpt-3.5-turbo-16k",
+            messages=[
+                {"role": "system", "content": "You are a professional nutritionist."},
+                {"role": "user", "content": personalized_meal_plan_prompt}
+            ]
+        )
+        
+        # This is where we need to format the meal plan
+        formatted_meal_plan = format_meal_plan(meal_plan_response.choices[0].message.content)
+        
+        if formatted_meal_plan.startswith('Error:'):
+            return jsonify({"success": False, "error": formatted_meal_plan}), 500
 
         # Only generate grocery list if meal plan was successful
         grocery_list = get_openai_response(
-            f"Based on this meal plan, create a categorized grocery list:\n{meal_plan}\n\n"
+            f"Based on this meal plan, create a categorized grocery list:\n{formatted_meal_plan}\n\n"
             "Format as:\nPRODUCE:\n- [item] (quantity)\nPROTEINS:\n- [item] (quantity)\n"
             "PANTRY:\n- [item] (quantity)",
             max_tokens=1000
@@ -182,7 +193,7 @@ Make sure each meal:
         # Generate email content
         html_content = generate_html_email(
             daily_targets=daily_targets,
-            meal_plan=meal_plan,
+            meal_plan=formatted_meal_plan,
             grocery_list=grocery_list,
             prep_tips=prep_tips,
             user_profile=user_profile
@@ -455,42 +466,40 @@ def get_base64_logo():
         return ""
 
 def format_meal_plan(meal_plan_text):
-    """Format the meal plan text into structured HTML"""
+    """Format the meal plan section"""
     try:
-        logger.debug(f"Formatting meal plan: {meal_plan_text}")
-        if not meal_plan_text:
-            return "<p>Error: Empty meal plan</p>"
-
-        formatted_html = "<div class='meal-plan'>"
-        current_day = None
+        formatted_html = ""
+        days = meal_plan_text.split('DAY')
         
-        for line in meal_plan_text.splitlines():
-            line = line.strip()
-            if not line:
-                continue
-                
-            if line.startswith("DAY"):
-                if current_day:
-                    formatted_html += "</div>"
-                current_day = line
-                formatted_html += f"""
-                    <div class="meal-day">
-                        <h3>{current_day}</h3>
-                """
-            elif ":" in line:
-                meal_type, details = line.split(":", 1)
-                formatted_html += f"""
-                    <div class="meal-item">
-                        <h4>{meal_type.strip()}</h4>
-                        <p>{details.strip()}</p>
-                    </div>
-                """
-        
-        if current_day:  # Close the last day div if exists
-            formatted_html += "</div>"
-        formatted_html += "</div>"
-        return formatted_html
+        for day in days[1:]:  # Skip the first empty split
+            day_content = f"<div class='day-plan'><h2>DAY{day}</h2>"
             
+            # Split into meal sections
+            sections = day.split('\n\n')
+            
+            for section in sections:
+                if any(meal in section.lower() for meal in ['breakfast', 'lunch', 'dinner', 'snacks']):
+                    # Extract meal name and description
+                    lines = section.strip().split('\n')
+                    meal_type = lines[0].strip()
+                    meal_name = lines[1].strip() if len(lines) > 1 else ""
+                    description = lines[2].strip() if len(lines) > 2 else ""
+                    macros = next((line for line in lines if '|' in line), "")
+                    
+                    # Format the meal section
+                    day_content += f"""
+                        <div class='meal-section'>
+                            <h3>{meal_type}</h3>
+                            <h4>{meal_name}</h4>
+                            <p>{description}</p>
+                            <p class='macros'>{macros}</p>
+                        </div>
+                    """
+            
+            day_content += "</div>"
+            formatted_html += day_content
+            
+        return formatted_html
     except Exception as e:
         logger.error(f"Error formatting meal plan: {str(e)}")
         return "<p>Error formatting meal plan</p>"
