@@ -87,6 +87,14 @@ Snacks
 
 Meal Prep Tips:
 - [3-4 specific preparation instructions for the day's meals]
+
+IMPORTANT:
+1. Provide **all 7 days** in full detail. 
+2. Do **not** summarize or say “the remaining days are the same.” 
+3. For each day, list Breakfast, Lunch, Dinner, and Snacks **with 2–3 sentences each of introduction each**. 
+4. **Do not abbreviate**. 
+5. If you skip any day or do not include a meal’s description, you are not following the instructions.
+6. No summarizing or referencing other days. Each day must have its own meal details and macronutrient breakdown.
 """
 
 app = Flask(__name__)
@@ -131,30 +139,30 @@ def generate_meal_plan():
 
         # Add user profile context to meal plan prompt
         personalized_meal_plan_prompt = f"""
-Based on a profile of:
-- Goal: {user_profile.get('goal', '').replace('_', ' ')}
-- Gender: {user_profile.get('gender', '')}
-- Age: {user_profile.get('age', '')}
-- Height: {user_profile.get('height', '')}cm
-- Current Weight: {user_profile.get('current_weight', '')}kg
-- Target Weight: {user_profile.get('target_weight', '')}kg
-- Activity Level: {user_profile.get('activity', '').replace('_', ' ')}
-- Diet Preference: {user_profile.get('diet_preference', '').replace('_', ' ')}
-- Allergies: {user_profile.get('allergies', '')}
-- Cooking Time: {user_profile.get('cooking_time', '')}
-- Meal Prep: {user_profile.get('meal_prep', '')}
+        Based on a profile of:
+        - Goal: {user_profile.get('goal', '').replace('_', ' ')}
+        - Gender: {user_profile.get('gender', '')}
+        - Age: {user_profile.get('age', '')}
+        - Height: {user_profile.get('height', '')}cm
+        - Current Weight: {user_profile.get('current_weight', '')}kg
+        - Target Weight: {user_profile.get('target_weight', '')}kg
+        - Activity Level: {user_profile.get('activity', '').replace('_', ' ')}
+        - Diet Preference: {user_profile.get('diet_preference', '').replace('_', ' ')}
+        - Allergies: {user_profile.get('allergies', '')}
+        - Cooking Time: {user_profile.get('cooking_time', '')}
+        - Meal Prep: {user_profile.get('meal_prep', '')}
 
-{meal_plan_prompt}
+        {meal_plan_prompt}
 
-Make sure each meal:
-1. Supports their {user_profile.get('goal', '').replace('_', ' ')} goal
-2. Fits within their {user_profile.get('cooking_time', '')} cooking time preference
-3. Avoids any {user_profile.get('allergies', '')} allergens
-4. Matches their {user_profile.get('diet_preference', '').replace('_', ' ')} dietary preference
-5. Includes meal prep suggestions if they selected 'yes'
+        Make sure each meal:
+        1. Supports their {user_profile.get('goal', '').replace('_', ' ')} goal
+        2. Fits within their {user_profile.get('cooking_time', '')} cooking time preference
+        3. Avoids any {user_profile.get('allergies', '')} allergens
+        4. Matches their {user_profile.get('diet_preference', '').replace('_', ' ')} dietary preference
+        5. Includes meal prep suggestions if they selected 'yes'
 """
 
-        meal_plan = get_openai_response(personalized_meal_plan_prompt, max_tokens=2000)
+        meal_plan = get_openai_response(personalized_meal_plan_prompt, max_tokens=5000)
         if meal_plan.startswith('Error:'):
             return jsonify({"success": False, "error": meal_plan}), 500
 
@@ -197,7 +205,7 @@ Make sure each meal:
         logger.error(f"Error traceback: {traceback.format_exc()}")
         return jsonify({"success": False, "error": str(e)}), 500
 
-def get_openai_response(prompt, max_tokens=2000):
+def get_openai_response(prompt, max_tokens=5000):
     """Helper function to get OpenAI API response with error handling"""
     try:
         logger.debug(f"Sending prompt to OpenAI (length: {len(prompt)})")
@@ -207,7 +215,7 @@ def get_openai_response(prompt, max_tokens=2000):
                 {"role": "system", "content": "You are a precise nutritionist. Respond only in the exact format requested."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.7,
+            temperature=0.2,
             max_tokens=max_tokens
         )
         
