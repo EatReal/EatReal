@@ -457,22 +457,26 @@ DAY [number]:
 Breakfast:
 [Introduction explaining why this meal was chosen]
 [meal] 
-| P: [X]g, C: [X]g, F: [X]g
+
+P: [X]g, C: [X]g, F: [X]g
 
 Lunch:
 [Introduction explaining why this meal was chosen]
 [meal] 
-| P: [X]g, C: [X]g, F: [X]g
+
+P: [X]g, C: [X]g, F: [X]g
 
 Dinner:
 [Introduction explaining why this meal was chosen]
 [meal] 
-| P: [X]g, C: [X]g, F: [X]g
+
+P: [X]g, C: [X]g, F: [X]g
 
 Snacks:
 [Introduction explaining why this meal was chosen]
 [meal] 
-| P: [X]g, C: [X]g, F: [X]g
+
+P: [X]g, C: [X]g, F: [X]g
 
 Make sure each meal:
 1. Supports their ${answers.goal.replace('_', ' ')} goal
