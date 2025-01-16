@@ -88,12 +88,39 @@ Snacks
 Meal Prep Tips:
 - [3-4 specific preparation instructions for the day's meals]
 
+Example day:
+DAY 2:
+Breakfast
+Oatmeal with Berries
+- A hearty bowl of steel-cut oats topped with fresh mixed berries and a drizzle of honey. Served with a side of Greek yogurt.
+| protein: 15g, carbs: 20g, fats: 10g
+
+Lunch 
+Grilled Chicken Salad
+- Fresh mixed greens topped with grilled chicken breast, cherry tomatoes, cucumber and balsamic vinaigrette. Served with whole grain crackers.
+| protein: 20g, carbs: 30g, fats: 10g
+
+Dinner
+Baked Salmon
+- Oven-baked salmon fillet with roasted vegetables and quinoa. Seasoned with lemon, herbs and olive oil.
+| protein: 25g, carbs: 40g, fats: 10g
+
+Snacks
+Greek Yogurt Parfait
+- Layered Greek yogurt with granola, honey and fresh berries. A perfect protein-rich afternoon snack.
+| protein: 12g, carbs: 10g, fats: 8g
+
+Meal Prep Tips:
+- Prep vegetables and proteins in advance
+- Cook grains in batches
+- Store components separately
+
 IMPORTANT:
 1. Provide **all 7 days** in full detail. 
-2. Do **not** summarize or say “the remaining days are the same.” 
+2. Do **not** summarize or say "the remaining days are the same." 
 3. For each day, list Breakfast, Lunch, Dinner, and Snacks **with 2–3 sentences each of introduction each**. 
 4. **Do not abbreviate**. 
-5. If you skip any day or do not include a meal’s description, you are not following the instructions.
+5. If you skip any day or do not include a meal's description, you are not following the instructions.
 6. No summarizing or referencing other days. Each day must have its own meal details and macronutrient breakdown.
 """
 
@@ -470,6 +497,8 @@ def format_meal_plan(meal_plan_text):
 
         formatted_html = "<div class='meal-plan'>"
         current_day = None
+        current_meal = None
+        meal_description = None
         
         for line in meal_plan_text.splitlines():
             line = line.strip()
@@ -478,22 +507,45 @@ def format_meal_plan(meal_plan_text):
                 
             if line.startswith("DAY"):
                 if current_day:
+                    if current_meal and meal_description:
+                        formatted_html += f"<p>{meal_description}</p>"
                     formatted_html += "</div>"
                 current_day = line
+                current_meal = None
+                meal_description = None
                 formatted_html += f"""
                     <div class="meal-day">
                         <h3>{current_day}</h3>
                 """
-            elif ":" in line:
-                meal_type, details = line.split(":", 1)
+            elif line in ["Breakfast", "Lunch", "Dinner", "Snacks"]:
+                if current_meal and meal_description:
+                    formatted_html += f"<p>{meal_description}</p>"
+                current_meal = line
+                meal_description = None
                 formatted_html += f"""
                     <div class="meal-item">
-                        <h4>{meal_type.strip()}</h4>
-                        <p>{details.strip()}</p>
+                        <h4>{current_meal}</h4>
+                """
+            elif line.startswith("-"):
+                meal_description = line[1:].strip()
+            elif line.startswith("|"):
+                formatted_html += f"""
+                    <p>{meal_description}</p>
+                    <p class="macros">{line.strip()}</p>
                     </div>
                 """
+                current_meal = None
+                meal_description = None
+            elif "Meal Prep Tips:" in line:
+                if current_meal and meal_description:
+                    formatted_html += f"<p>{meal_description}</p>"
+                formatted_html += "<h4>Meal Prep Tips:</h4>"
+            elif line.startswith("-") and "Meal Prep Tips:" in formatted_html:
+                formatted_html += f"<p>{line[1:].strip()}</p>"
         
         if current_day:  # Close the last day div if exists
+            if current_meal and meal_description:
+                formatted_html += f"<p>{meal_description}</p>"
             formatted_html += "</div>"
         formatted_html += "</div>"
         return formatted_html
