@@ -4,10 +4,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentIndex = 0;
 
+    /* Redundant initialization log
+    console.log('Reviews component initialized');
+    */
+
     // Set initial active review
     reviews[0].classList.add('active');
 
     function cycleReviews() {
+        /* Redundant debug log
+        console.log('Cycling to next review');
+        */
+        
         // Remove active class from current review
         reviews[currentIndex].classList.remove('active');
         

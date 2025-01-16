@@ -1,3 +1,4 @@
+/* DEPRECATED: Authentication system currently not in use
 class Auth {
     constructor() {
         this.isLoggedIn = false;
@@ -78,6 +79,4 @@ class Auth {
         this.updateUI();
     }
 }
-
-// Initialize authentication
-const auth = new Auth(); 
+*/ 

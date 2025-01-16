@@ -10,6 +10,12 @@ class NutritionQuestionnaire {
     constructor() {
         this.currentQuestion = 0;
         this.answers = {};
+        
+        /* Redundant debug logs
+        console.log('Questionnaire initialized');
+        console.log('Current question:', this.currentQuestion);
+        */
+
         this.questions = [
             {
                 id: 'goal',
@@ -450,19 +456,23 @@ Format each day as:
 DAY [number]:
 Breakfast:
 [Introduction explaining why this meal was chosen]
-[meal] | P: [X]g, C: [X]g, F: [X]g
+[meal] 
+| P: [X]g, C: [X]g, F: [X]g
 
 Lunch:
 [Introduction explaining why this meal was chosen]
-[meal] | P: [X]g, C: [X]g, F: [X]g
+[meal] 
+| P: [X]g, C: [X]g, F: [X]g
 
 Dinner:
 [Introduction explaining why this meal was chosen]
-[meal] | P: [X]g, C: [X]g, F: [X]g
+[meal] 
+| P: [X]g, C: [X]g, F: [X]g
 
 Snacks:
 [Introduction explaining why this meal was chosen]
-[meal] | P: [X]g, C: [X]g, F: [X]g
+[meal] 
+| P: [X]g, C: [X]g, F: [X]g
 
 Make sure each meal:
 1. Supports their ${answers.goal.replace('_', ' ')} goal

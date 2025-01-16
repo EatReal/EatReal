@@ -66,20 +66,28 @@ Create a 7-day meal plan with this EXACT format for each day:
 DAY [number]:
 
 Breakfast:
-[Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
-[meal] | P: [X]g, C: [X]g, F: [X]g
+[Write 2 sentences explaining why this meal was chosen and how it supports their goals]
+[meal] 
+
+| P: [X]g, C: [X]g, F: [X]g
 
 Lunch:
-[Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
-[meal] | P: [X]g, C: [X]g, F: [X]g
+[Write 2 sentences explaining why this meal was chosen and how it supports their goals]
+[meal] 
+
+| P: [X]g, C: [X]g, F: [X]g
 
 Dinner:
 [Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
-[meal] | P: [X]g, C: [X]g, F: [X]g
+[meal] 
+
+| P: [X]g, C: [X]g, F: [X]g
 
 Snacks:
 [Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
-[meal] | P: [X]g, C: [X]g, F: [X]g
+[meal] 
+
+| P: [X]g, C: [X]g, F: [X]g
 """
 
 app = Flask(__name__)

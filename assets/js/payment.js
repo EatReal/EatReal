@@ -1,5 +1,14 @@
-// Add console.log to verify script is loading
+// Redundant console logs
+/*
 console.log('Payment.js loaded');
+console.log('PayPal config response status:', response.status);
+console.log('PayPal config received, loading SDK...');
+console.log('PayPal SDK loaded successfully');
+console.log('Initializing PayPal buttons...');
+*/
+
+// Keep essential logs for debugging critical operations
+console.log('Payment operation completed');
 
 const RENDER_URL = 'https://eatreal-backend.onrender.com';
 
