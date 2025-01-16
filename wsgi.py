@@ -1,3 +1,4 @@
+# DEPRECATED: Consider consolidating with app.py
 import os
 import sys
 

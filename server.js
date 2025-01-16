@@ -9,7 +9,7 @@ const fs = require('fs');
 // More permissive CORS configuration
 app.use(cors());  // Allow all origins temporarily for testing
 
-// Or if you want to be more specific:
+/* Redundant CORS configuration
 app.use(cors({
     origin: '*',  // Allow all origins
     methods: ['GET', 'POST', 'OPTIONS'],
@@ -17,6 +17,7 @@ app.use(cors({
     credentials: false,
     maxAge: 86400  // Cache preflight requests for 24 hours
 }));
+*/
 
 app.use(express.json());
 app.use(express.static('public'));
