@@ -65,29 +65,28 @@ meal_plan_prompt = """
 Create a 7-day meal plan with this EXACT format for each day:
 DAY [number]:
 
-Breakfast:
-[Write 2 sentences explaining why this meal was chosen and how it supports their goals]
-[meal] 
+Breakfast
+[meal name]
+- [2-3 sentence description of the meal and ingredients]
+| protein: [X]g, carbs: [X]g, fats: [X]g
 
-| P: [X]g, C: [X]g, F: [X]g
+Lunch
+[meal name]
+- [2-3 sentence description of the meal and ingredients]
+| protein: [X]g, carbs: [X]g, fats: [X]g
 
-Lunch:
-[Write 2 sentences explaining why this meal was chosen and how it supports their goals]
-[meal] 
+Dinner
+[meal name]
+- [2-3 sentence description of the meal and ingredients]
+| protein: [X]g, carbs: [X]g, fats: [X]g
 
-| P: [X]g, C: [X]g, F: [X]g
+Snacks
+[meal name]
+- [2-3 sentence description of the meal and ingredients]
+| protein: [X]g, carbs: [X]g, fats: [X]g
 
-Dinner:
-[Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
-[meal] 
-
-| P: [X]g, C: [X]g, F: [X]g
-
-Snacks:
-[Write 2-3 sentences explaining why this meal was chosen and how it supports their goals]
-[meal] 
-
-| P: [X]g, C: [X]g, F: [X]g
+Meal Prep Tips:
+- [3-4 specific preparation instructions for the day's meals]
 """
 
 app = Flask(__name__)
@@ -155,24 +154,13 @@ Make sure each meal:
 5. Includes meal prep suggestions if they selected 'yes'
 """
 
-        # Generate meal plan
-        meal_plan_response = client.chat.completions.create(
-            model="gpt-3.5-turbo-16k",
-            messages=[
-                {"role": "system", "content": "You are a professional nutritionist."},
-                {"role": "user", "content": personalized_meal_plan_prompt}
-            ]
-        )
-        
-        # This is where we need to format the meal plan
-        formatted_meal_plan = format_meal_plan(meal_plan_response.choices[0].message.content)
-        
-        if formatted_meal_plan.startswith('Error:'):
-            return jsonify({"success": False, "error": formatted_meal_plan}), 500
+        meal_plan = get_openai_response(personalized_meal_plan_prompt, max_tokens=2000)
+        if meal_plan.startswith('Error:'):
+            return jsonify({"success": False, "error": meal_plan}), 500
 
         # Only generate grocery list if meal plan was successful
         grocery_list = get_openai_response(
-            f"Based on this meal plan, create a categorized grocery list:\n{formatted_meal_plan}\n\n"
+            f"Based on this meal plan, create a categorized grocery list:\n{meal_plan}\n\n"
             "Format as:\nPRODUCE:\n- [item] (quantity)\nPROTEINS:\n- [item] (quantity)\n"
             "PANTRY:\n- [item] (quantity)",
             max_tokens=1000
@@ -193,7 +181,7 @@ Make sure each meal:
         # Generate email content
         html_content = generate_html_email(
             daily_targets=daily_targets,
-            meal_plan=formatted_meal_plan,
+            meal_plan=meal_plan,
             grocery_list=grocery_list,
             prep_tips=prep_tips,
             user_profile=user_profile
@@ -449,57 +437,59 @@ def generate_html_email(daily_targets, meal_plan, grocery_list, prep_tips, user_
     </html>
     """
 
-def get_base64_logo():
-    """Return the pre-encoded logo from file"""
-    try:
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        logo_path = os.path.join(current_dir, 'encoded_logo.txt')
-        
-        with open(logo_path, 'r') as file:
-            content = file.read()
-            logger.debug("Reading encoded logo file")
-            encoded_logo = content.replace("ENCODED_LOGO = '''", "").replace("'''", "").strip()
-            logger.debug(f"Encoded logo length: {len(encoded_logo)}")
-            return encoded_logo
-    except Exception as e:
-        logger.error(f"Error loading encoded logo: {str(e)}")
-        return ""
+#def get_base64_logo():
+#    """Return the pre-encoded logo from file"""
+#    try:
+#        current_dir = os.path.dirname(os.path.abspath(__file__))
+#        logo_path = os.path.join(current_dir, 'encoded_logo.txt')
+#        
+#        with open(logo_path, 'r') as file:
+#            content = file.read()
+#            logger.debug("Reading encoded logo file")
+#            encoded_logo = content.replace("ENCODED_LOGO = '''", "").replace("'''", "").strip()
+#            logger.debug(f"Encoded logo length: {len(encoded_logo)}")
+#            return encoded_logo
+#    except Exception as e:
+#        logger.error(f"Error loading encoded logo: {str(e)}")
+#        return ""
 
 def format_meal_plan(meal_plan_text):
-    """Format the meal plan section"""
+    """Format the meal plan text into structured HTML"""
     try:
-        formatted_html = ""
-        days = meal_plan_text.split('DAY')
+        logger.debug(f"Formatting meal plan: {meal_plan_text}")
+        if not meal_plan_text:
+            return "<p>Error: Empty meal plan</p>"
+
+        formatted_html = "<div class='meal-plan'>"
+        current_day = None
         
-        for day in days[1:]:  # Skip the first empty split
-            day_content = f"<div class='day-plan'><h2>DAY{day}</h2>"
-            
-            # Split into meal sections
-            sections = day.split('\n\n')
-            
-            for section in sections:
-                if any(meal in section.lower() for meal in ['breakfast', 'lunch', 'dinner', 'snacks']):
-                    # Extract meal name and description
-                    lines = section.strip().split('\n')
-                    meal_type = lines[0].strip()
-                    meal_name = lines[1].strip() if len(lines) > 1 else ""
-                    description = lines[2].strip() if len(lines) > 2 else ""
-                    macros = next((line for line in lines if '|' in line), "")
-                    
-                    # Format the meal section
-                    day_content += f"""
-                        <div class='meal-section'>
-                            <h3>{meal_type}</h3>
-                            <h4>{meal_name}</h4>
-                            <p>{description}</p>
-                            <p class='macros'>{macros}</p>
-                        </div>
-                    """
-            
-            day_content += "</div>"
-            formatted_html += day_content
-            
+        for line in meal_plan_text.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+                
+            if line.startswith("DAY"):
+                if current_day:
+                    formatted_html += "</div>"
+                current_day = line
+                formatted_html += f"""
+                    <div class="meal-day">
+                        <h3>{current_day}</h3>
+                """
+            elif ":" in line:
+                meal_type, details = line.split(":", 1)
+                formatted_html += f"""
+                    <div class="meal-item">
+                        <h4>{meal_type.strip()}</h4>
+                        <p>{details.strip()}</p>
+                    </div>
+                """
+        
+        if current_day:  # Close the last day div if exists
+            formatted_html += "</div>"
+        formatted_html += "</div>"
         return formatted_html
+            
     except Exception as e:
         logger.error(f"Error formatting meal plan: {str(e)}")
         return "<p>Error formatting meal plan</p>"
@@ -613,6 +603,8 @@ def send_email(user_email, html_content):
         logger.error(f"Email sending error: {str(e)}")
         return False
 
+
+
 def format_daily_targets(targets_text):
     """Format the daily targets section"""
     try:
@@ -648,30 +640,6 @@ def format_daily_targets(targets_text):
     except Exception as e:
         logger.error(f"Error formatting daily targets: {str(e)}")
         return "<p>Error formatting daily targets</p>"
-
-@app.route('/test-logo', methods=['GET'])
-def test_logo():
-    """Test endpoint just for logo rendering"""
-    try:
-        encoded_logo = get_base64_logo()
-        return f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Logo Test</title>
-        </head>
-        <body>
-            <h1>Logo Test</h1>
-            <img src="data:image/png;base64,{encoded_logo}" alt="Eat Real Logo" style="width: 120px;">
-            <pre style="word-wrap: break-word; white-space: pre-wrap;">
-                Base64 length: {len(encoded_logo)}
-                First 100 chars: {encoded_logo[:100]}
-            </pre>
-        </body>
-        </html>
-        """
-    except Exception as e:
-        return f"Error: {str(e)}", 500
 
 if __name__ == '__main__':
     # Add debug logging for startup
