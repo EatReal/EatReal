@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="assets/images/EatRealLogo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta charset="UTF-8">
+    <title>Plant-Based Performance - Eat Real</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/checkout.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://merchant.revolut.com/embed.js"></script>
+</head>
+<body style="background:#fff7e7;">
+    <div class="product-page">
+        <a href="mealplans.html" class="back-link">← Back to Meal Plans</a>
+        <div class="product-content">
+            <div class="product-header">
+                <div class="product-image-container">
+                    <img src="assets/images/PlantBased.png" alt="Plant-Based Performance" class="product-image">
+                </div>
+                <div class="product-title-section">
+                    <h1>Plant-Based Performance</h1>
+                    <div class="rating">
+                        <div class="rating-center">
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-count">4.7</span>
+                        </div>
+                    </div>
+                    <div class="price-container">
+                        <span class="price">£4.99</span>
+                    </div>
+                </div>
+            </div>
+            <div class="description">
+                <h2 class="header">About this meal plan</h2>
+                <p>Boost your strength and vitality with our protein-rich, plant-based meal plan!</p>
+                <div class="features">
+                    <h3 class="header">What's included:</h3>
+                    <ul>
+                        <li>
+                            <div class="feature-header">
+                                <strong>30-Day Plant-Based Plan 🌱</strong>
+                            </div>
+                            <p>Balanced daily meal plans focused on plant-powered nutrition for performance.</p>
+                        </li>
+                        <li>
+                            <div class="feature-header">
+                                <strong>Weekly Shopping Lists 🛒</strong>
+                            </div>
+                            <p>Easy-to-follow shopping lists for a variety of plant-based foods.</p>
+                        </li>
+                        <li>
+                            <div class="feature-header">
+                                <strong>Macronutrient Breakdown 📊</strong>
+                            </div>
+                            <p>Detailed macros for every meal to support your goals.</p>
+                        </li>
+                        <li>
+                            <div class="feature-header">
+                                <strong>Delicious Vegan Recipes 🥗</strong>
+                            </div>
+                            <p>Creative, protein-rich recipes for every meal of the day.</p>
+                        </li>
+                        <li>
+                            <div class="feature-header">
+                                <strong>Supplement Guidance 💊</strong>
+                            </div>
+                            <p>Advice on plant-based supplements to optimize your nutrition (optional).</p>
+                        </li>
+                    </ul>
+                </div>
+            <div class="reviews-section">
+                <h2>Reviews</h2>
+                <div class="reviews-container">
+                    <div class="reviews-grid">
+                        <div class="review">
+                            <div class="stars">★★★★★</div>
+                            <div class="reviewer-info">
+                                <img src="assets/images/avatar-placeholder.png" alt="" class="reviewer-avatar">
+                                <span class="reviewer-name">Jess L.</span>
+                            </div>
+                            <p>"I feel stronger and more energetic than ever. The recipes are so creative and tasty!"</p>
+                        </div>
+                        <div class="review">
+                            <div class="stars">★★★★★</div>
+                            <div class="reviewer-info">
+                                <img src="assets/images/avatar-placeholder.png" alt="" class="reviewer-avatar">
+                                <span class="reviewer-name">Samir H.</span>
+                            </div>
+                            <p>"Great for athletes who want to eat plant-based. The macros are spot on."</p>
+                        </div>
+                        <div class="review">
+                            <div class="stars">★★★★★</div>
+                            <div class="reviewer-info">
+                                <img src="assets/images/avatar-placeholder.png" alt="" class="reviewer-avatar">
+                                <span class="reviewer-name">Olivia W.</span>
+                            </div>
+                            <p>"Easy to follow and the shopping lists are a lifesaver. Highly recommend!"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="checkout-container">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label>Discount Code</label>
+                    <div class="discount-input-container">
+                        <input type="text" placeholder="Enter promo code here" id="promoCode">
+                        <button class="apply">Apply</button>
+                    </div>
+                </div>
+                <div class="total-line">
+                    <span>Total :</span>
+                    <span class="total-amount">£4.99</span>
+                </div>
+                <div class="loader-container" style="display: none;">
+                    <div class="loader"></div>
+                </div>
+                <div id="paypal-button-container"></div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/reviews.js"></script>
+    <script src="assets/js/checkout.js"></script>
+    <script src="assets/js/payment-plant-based.js"></script>
+    <div id="error-message" class="error-message" style="display: none;"></div>
+    <div id="success-message" class="success-message" style="display: none;">
+        Payment successful! Preparing your download...
+    </div>
+    <script src="https://js.stripe.com/v3/"></script>
+</body>
+</html> 

@@ -60,8 +60,11 @@ fetch(`${RENDER_URL}/api/get-paypal-config`)
         }
     });
 
-let currentPrice = 14.99;
-const originalPrice = 14.99;
+let currentPrice = 4.99;
+const originalPrice = 4.99;
+
+const loaderContainer = document.querySelector('.loader-container');
+const paypalButtonContainer = document.getElementById('paypal-button-container');
 
 // Find the existing Apply button and add click handler
 document.querySelector('.apply').addEventListener('click', function() {
@@ -117,9 +120,29 @@ function initializePayPalButtons() {
     mainContainer.appendChild(orSeparator);  // Only one "or" separator
     mainContainer.appendChild(cardContainer);
 
+    const showLoader = () => {
+        const email = document.querySelector('input[type="email"]').value;
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = 'Please enter a valid email address.';
+            errorDiv.style.display = 'block';
+            return false;
+        }
+        document.getElementById('error-message').style.display = 'none';
+        if(loaderContainer) loaderContainer.style.display = 'flex';
+        if(paypalButtonContainer) paypalButtonContainer.style.display = 'none';
+        return true;
+    };
+
+    const hideLoader = () => {
+        if(loaderContainer) loaderContainer.style.display = 'none';
+        if(paypalButtonContainer) paypalButtonContainer.style.display = 'block';
+    };
+
     // Common order handling function
     const handleOrderSuccess = function(data, actions) {
         console.log('Payment successful, starting order handling...');
+        if(loaderContainer) loaderContainer.style.display = 'none';
         return actions.order.capture().then(function(details) {
             console.log('Order captured, details:', details);
             
@@ -132,14 +155,17 @@ function initializePayPalButtons() {
             successDiv.style.display = 'block';
             successDiv.textContent = 'Processing your purchase...';
             
-            // Send email
+            // Send email with product key for Food Bible
             console.log('Sending email request to:', `${RENDER_URL}/api/send-purchase-email`);
             fetch(`${RENDER_URL}/api/send-purchase-email`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ 
+                    email: email,
+                    product: 'food-bible'
+                })
             })
             .then(response => {
                 console.log('Email API response:', response);
@@ -170,6 +196,11 @@ function initializePayPalButtons() {
             shape: 'rect',
             label: 'paypal'
         },
+        onClick: function(data, actions) {
+            if (!showLoader()) {
+                return actions.reject();
+            }
+        },
         createOrder: function(data, actions) {
             console.log('Creating PayPal order...');
             return actions.order.create({
@@ -181,8 +212,13 @@ function initializePayPalButtons() {
             });
         },
         onApprove: handleOrderSuccess,
+        onCancel: function(data) {
+            console.log('PayPal payment cancelled:', data);
+            hideLoader();
+        },
         onError: function(err) {
             console.error('PayPal error:', err);
+            hideLoader();
             const errorDiv = document.getElementById('error-message');
             errorDiv.style.display = 'block';
             errorDiv.textContent = 'Payment failed. Please try again.';
@@ -198,6 +234,11 @@ function initializePayPalButtons() {
             shape: 'rect',
             label: 'pay'
         },
+        onClick: function(data, actions) {
+            if (!showLoader()) {
+                return actions.reject();
+            }
+        },
         createOrder: function(data, actions) {
             console.log('Creating card order...');
             return actions.order.create({
@@ -209,8 +250,13 @@ function initializePayPalButtons() {
             });
         },
         onApprove: handleOrderSuccess,
+        onCancel: function(data) {
+            console.log('Card payment cancelled:', data);
+            hideLoader();
+        },
         onError: function(err) {
             console.error('Card payment error:', err);
+            hideLoader();
             const errorDiv = document.getElementById('error-message');
             errorDiv.style.display = 'block';
             errorDiv.textContent = 'Payment failed. Please try again.';
@@ -244,7 +290,8 @@ function triggerDownload() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            email: document.querySelector('input[type="email"]').value
+            email: document.querySelector('input[type="email"]').value,
+            product: 'food-bible'
         })
     })
     .then(response => response.blob())

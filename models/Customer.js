@@ -16,7 +16,11 @@ const customerSchema = new mongoose.Schema({
     },
     productName: {
         type: String,
-        default: 'The Food Bible'
+        required: true
+    },
+    productKey: {
+        type: String,
+        required: true
     }
 });
 

@@ -12,11 +12,10 @@
 </head>
 <body>
     <header>
-        <img src="assets/images/EatRealLogo.png" alt="Logo" class="logo"> <!-- Changed to PNG for transparency -->
-        <h1>Eat Real</h1>
-        <p class="subtitle">Transform your health through the power of natural, whole foods. Your journey to vitality begins here.</p>
+        <img src="assets/images/EatRealLogo.png" alt="Logo" class="logo" style="width: 200px;"> <!-- Changed to PNG for transparency -->
+        <p class="subtitle" style="font-weight: bold; font-family: 'Segoe UI Light', sans-serif;">Transform your health through the power of natural, whole foods. Your journey to vitality begins here.</p>
         <div class="social-links">
-            <a href="https://www.tiktok.com/@eat.real" target="_blank" class="social-link"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.tiktok.com/@.eatreal" target="_blank" class="social-link"><i class="fab fa-tiktok"></i></a>
             <a href="mailto:eatreal47@gmail.com" class="social-link"><i class="far fa-envelope"></i></a>
         </div>
     </header>
@@ -25,19 +24,17 @@
         <div class="products-container">
             <!-- Left Side Products -->
             <div class="side-products">
-                <div class="product-card">
-                    <h2>Meal Plans</h2>
-                    <p>Weekly meal plans designed for optimal nutrition and taste.</p>
-                    <span class="price">£4.99</span>
-                    <button class="coming-soon-button" disabled>Coming Soon!</button>
-                </div>
-
-                <div class="product-card">
-                    <h2>Recipe Collection</h2>
-                    <p>A curated collection of healthy, delicious recipes.</p>
-                    <span class="price">£4.99</span>
-                    <button class="coming-soon-button" disabled>Coming Soon!</button>
-                </div>
+                <a href="mealplans.html" class="featured-product">
+                    <img src="assets/images/mealplans.png" alt="Meal Plans" class="featured-image">
+                    <div class="product-info">
+                        <h2>Meal Plans</h2>
+                        <p>Weekly meal plans designed for optimal nutrition and taste.</p>
+                        <div class="price-container">
+                            <span class="original-price">£9.99</span>
+                            <span class="price">£4.99</span>
+                        </div>
+                    </div>
+                </a>
             </div>
 
             <!-- Main Product -->
@@ -55,19 +52,17 @@
 
             <!-- Right Side Products -->
             <div class="side-products">
-                <div class="product-card">
-                    <h2>Personalized Nutrition Plan</h2>
-                    <p>Get a customized nutrition plan based on your goals and preferences.</p>
-                    <span class="price">Free</span>
-                    <a href="questionnaire.html" class="start-now-button">Start Now</a>
-                </div>
-
-                <div class="product-card">
-                    <h2>Animal Based Diet Guide</h2>
-                    <p>Learn how to optimize your health with an animal-based approach.</p>
-                    <span class="price">£7.99</span>
-                    <button class="coming-soon-button" disabled>Coming Soon!</button>
-                </div>
+                <a href="questionnaire.html" class="featured-product">
+                    <img src="assets/images/NutritionPlan.png" alt="Personalized Plan" class="featured-image">
+                    <div class="product-info">
+                        <h2>Personalized Nutrition Plan</h2>
+                        <p>Get a customized nutrition plan based on your goals and preferences.</p>
+                        <div class="price-container">
+                            <span class="original-price">£5.99</span>
+                            <span class="price">Free</span>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
     </main>
