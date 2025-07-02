@@ -27,7 +27,7 @@
                 align-items: center;
             }
             .logo {
-                width: 72px !important;
+                width: 90px !important;
                 margin: 0 16px 0 0;
                 display: block;
             }
@@ -38,7 +38,7 @@
                 justify-content: center;
             }
             .subtitle {
-                font-size: 15px;
+                font-size: 17px;
                 margin: 0;
                 color: #555;
                 font-family: 'Segoe UI Light', 'Segoe UI', Arial, sans-serif;
@@ -52,11 +52,12 @@
             }
             .social-links {
                 gap: 16px;
-                margin-top: 12px;
+                margin-top: 24px;
                 display: flex;
+                justify-content: center;
             }
             .social-link {
-                font-size: 20px;
+                font-size: 24px;
             }
             /* Hide carousel and grid on mobile, show card stack */
             .mobile-products-carousel, .products-container.desktop-only {
@@ -65,7 +66,7 @@
             .meal-plans-grid.mobile-only {
                 display: flex;
                 flex-direction: column;
-                gap: 18px;
+                gap: 40px;
                 align-items: center;
                 padding: 0 0 18px 0;
             }
@@ -151,6 +152,9 @@
             .meal-plans-grid.mobile-only {
                 display: none !important;
             }
+            .gap {
+                column-gap: 20px;
+            }
             .header-flex {
                 max-width: 900px;
                 margin: 40px auto 32px auto;
@@ -160,17 +164,18 @@
                 align-items: center;
             }
             .logo {
-                width: 140px !important;
+                width: 180px !important;
                 margin-right: 32px;
             }
             .subtitle {
-                font-size: 20px;
+                font-size: 32px;
                 line-height: 1.5;
                 margin-bottom: 0;
             }
             .social-links {
-                margin-top: 18px;
-                font-size: 28px;
+                margin-top: 32px;
+                font-size: 32px;
+                justify-content: center;
             }
         }
     </style>
@@ -185,10 +190,6 @@
                 Transform your health through the power of <span class="highlight">natural</span>, <span class="highlight">whole foods</span>.<br>
                 Your journey to <span class="highlight">vitality</span> begins here.
             </p>
-            <div class="social-links">
-                <a href="https://www.tiktok.com/@.eatreal" target="_blank" class="social-link"><i class="fab fa-tiktok"></i></a>
-                <a href="mailto:eatreal47@gmail.com" class="social-link"><i class="far fa-envelope"></i></a>
-            </div>
         </div>
     </header>
     <!-- Mobile Card Stack (only visible on mobile) -->
@@ -349,6 +350,13 @@
         <p id="modal-message"></p>
         <button class="button close-modal">Close</button>
     </div>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://www.tiktok.com/@.eatreal" target="_blank" class="social-link"><i class="fab fa-tiktok"></i></a>
+            <a href="mailto:eatreal47@gmail.com" class="social-link"><i class="far fa-envelope"></i></a>
+        </div>
+    </footer>
 
     <script src="assets/js/main.js"></script>
     <script src="assets/js/mobile-carousel.js"></script>

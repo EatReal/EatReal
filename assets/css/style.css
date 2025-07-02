@@ -10,7 +10,7 @@ body {
     line-height: 1.6;
     color: #111;
     background: #fff7e7;
-    padding: 40px 20px;
+    padding: 40px 20px 60px 20px;
     min-height: 100vh;
     margin: 0;
      /*padding-bottom: 10;
@@ -22,7 +22,7 @@ body {
 /* Header Styles */
 header {
     max-width: 600px;
-    margin: 0 auto 60px;
+    margin: 0 auto 20px;
     text-align: center;
 }
 
