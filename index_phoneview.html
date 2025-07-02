@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="assets/images/EatRealLogo.png">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: 'unsafe-inline' 'unsafe-eval';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Eat Real - Mobile</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/mobile-responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @media (max-width: 767px) {
+            .header-flex {
+                display: flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+                padding: 2px 6px 2px 6px;
+                background: #fdf6e3;
+                border-radius: 18px;
+                margin: 2px 0 8px 0;
+            }
+            .header-logo {
+                flex: 0 0 auto;
+                display: flex;
+                align-items: center;
+            }
+            .logo {
+                width: 72px !important;
+                margin: 0 16px 0 0;
+                display: block;
+            }
+            .header-text {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .subtitle {
+                font-size: 15px;
+                margin: 0;
+                color: #555;
+                font-family: 'Segoe UI Light', sans-serif;
+                text-align: left;
+                line-height: 1.4;
+            }
+            .highlight {
+                color: #3a5d3a;
+                font-weight: bold;
+            }
+            .footer-social {
+                display: flex;
+                justify-content: center;
+                gap: 22px;
+                margin: 18px 0 8px 0;
+            }
+            .footer-social a {
+                font-size: 22px;
+                color: #222;
+                opacity: 0.8;
+            }
+            .footer-social a:hover {
+                opacity: 1;
+            }
+        }
+        .plan-image {
+            width: 100%;
+            height: 400px; /* or whatever height fits your design */
+            object-fit: cover;
+            object-position: center; /* This shows more of the top of the image */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-flex">
+        <div class="header-logo">
+            <img src="assets/images/EatRealLogo.png" alt="Logo" class="logo">
+        </div>
+        <div class="header-text">
+            <p class="subtitle">
+                Transform your health through the power of <span class="highlight">natural</span>, <span class="highlight">whole foods</span>.<br>
+                Your journey to <span class="highlight">vitality</span> begins here.
+            </p>
+        </div>
+    </header>
+
+    <main>
+        <div class="meal-plans-grid">
+            <!-- Personalised Nutrition Plan -->
+            <div class="meal-plan-card"
+                <a href="questionnaire.html" class="plan-link">
+                    <img src="assets/images/NutritionPlan.png" alt="Personalised Nutrition Plan" class="plan-image">
+                    <div class="plan-info">
+                        <h2>Personalised Nutrition Plan</h2>
+                        <p>Get a customized nutrition plan based on your goals and preferences.</p>
+                        <div class="price-tag">
+                            <span class="price">Free</span>
+                            <button class="buy-now-button">Get Yours Free</button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Meal Plans -->
+            <div class="meal-plan-card">
+                <a href="mealplans.html" class="plan-link">
+                    <img src="assets/images/mealplans.png" alt="Meal Plans" class="plan-image">
+                    <div class="plan-info">
+                        <h2>Meal Plans</h2>
+                        <p>Weekly meal plans designed for optimal nutrition and taste.</p>
+                        <div class="price-tag">
+                            <span class="price">£4.99</span>
+                            <button class="buy-now-button">Learn More</button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Food Bible -->
+            <div class="meal-plan-card">
+                <a href="product.html" class="plan-link">
+                    <img src="assets/images/foodbible.png" alt="The Food Bible" class="plan-image">
+                    <div class="plan-info">
+                        <h2>The Food Bible</h2>
+                        <p>Your comprehensive guide to understanding food and its impact on your body.</p>
+                        <div class="price-tag">
+                            <span class="price">£14.99</span>
+                            <button class="buy-now-button">Learn More</button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-social">
+            <a href="https://www.tiktok.com/@.eatreal" target="_blank" class="social-link"><i class="fab fa-tiktok"></i></a>
+            <a href="mailto:eatreal47@gmail.com" class="social-link"><i class="far fa-envelope"></i></a>
+        </div>
+    </footer>
+
+    <div class="modal-overlay"></div>
+    <div class="modal">
+        <p id="modal-message"></p>
+        <button class="button close-modal">Close</button>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html> 

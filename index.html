@@ -8,20 +8,297 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Eat Real</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/mobile-responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @media (max-width: 767px) {
+            .header-flex {
+                display: flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+                padding: 2px 6px 2px 6px;
+                background: #fdf6e3;
+                border-radius: 18px;
+                margin: 2px 0 8px 0;
+            }
+            .header-logo {
+                flex: 0 0 auto;
+                display: flex;
+                align-items: center;
+            }
+            .logo {
+                width: 72px !important;
+                margin: 0 16px 0 0;
+                display: block;
+            }
+            .header-text {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .subtitle {
+                font-size: 15px;
+                margin: 0;
+                color: #555;
+                font-family: 'Segoe UI Light', 'Segoe UI', Arial, sans-serif;
+                font-weight: normal;
+                text-align: left;
+                line-height: 1.4;
+            }
+            .highlight {
+                color: #3a5d3a;
+                font-weight: bold;
+            }
+            .social-links {
+                gap: 16px;
+                margin-top: 12px;
+                display: flex;
+            }
+            .social-link {
+                font-size: 20px;
+            }
+            /* Hide carousel and grid on mobile, show card stack */
+            .mobile-products-carousel, .products-container.desktop-only {
+                display: none !important;
+            }
+            .meal-plans-grid.mobile-only {
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
+                align-items: center;
+                padding: 0 0 18px 0;
+            }
+            .meal-plan-card {
+                width: 90vw;
+                max-width: 350px;
+                background: #fff;
+                border-radius: 18px;
+                box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+                transition: box-shadow 0.2s, transform 0.2s;
+                padding-bottom: 8px;
+            }
+            .meal-plan-card:active {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+                transform: scale(0.98);
+            }
+            .plan-image {
+                width: 100%;
+                height: 270;
+                object-fit: cover;
+                object-position: center;
+                display: flex;
+                justify-content: center;
+                border-radius: 18px 18px 0 0;
+                margin-bottom: 0;
+                align-items: center;
+            }
+            .plan-info {
+                padding: 1px 16px 16px 16px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .plan-info h2 {
+                font-size: 1.25rem;
+                font-weight: 700;
+                margin-bottom: 8px;
+                color: #222;
+            }
+            .plan-info p {
+                font-size: 1.05rem;
+                color: #555;
+                margin-bottom: 14px;
+                line-height: 1.4;
+            }
+            .price-tag {
+                margin: 10px 0 0 0;
+                display: flex;
+                gap: 10px;
+                align-items: baseline;
+                justify-content: center;
+            }
+            .price {
+                font-size: 1.4em !important;
+                font-weight: 700;
+                color: #45B26B !important;
+            }
+            .buy-now-button {
+                margin-left: 10px;
+                padding: 8px 18px;
+                background: #45B26B;
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                font-size: 1.08rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.2s;
+                box-shadow: 0 2px 6px rgba(69,178,107,0.08);
+                text-decoration: none;
+                display: inline-block;
+            }
+            .buy-now-button:active {
+                background: #39995a;
+            }
+        }
+        @media (min-width: 768px) {
+            .meal-plans-grid.mobile-only {
+                display: none !important;
+            }
+            .header-flex {
+                max-width: 900px;
+                margin: 40px auto 32px auto;
+                padding: 12px 12px 12px 12px;
+                border-radius: 32px;
+                background: #fdf6e3;
+                align-items: center;
+            }
+            .logo {
+                width: 140px !important;
+                margin-right: 32px;
+            }
+            .subtitle {
+                font-size: 20px;
+                line-height: 1.5;
+                margin-bottom: 0;
+            }
+            .social-links {
+                margin-top: 18px;
+                font-size: 28px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <img src="assets/images/EatRealLogo.png" alt="Logo" class="logo" style="width: 200px;"> <!-- Changed to PNG for transparency -->
-        <p class="subtitle" style="font-weight: bold; font-family: 'Segoe UI Light', sans-serif;">Transform your health through the power of natural, whole foods. Your journey to vitality begins here.</p>
-        <div class="social-links">
-            <a href="https://www.tiktok.com/@.eatreal" target="_blank" class="social-link"><i class="fab fa-tiktok"></i></a>
-            <a href="mailto:eatreal47@gmail.com" class="social-link"><i class="far fa-envelope"></i></a>
+    <header class="header-flex">
+        <div class="header-logo">
+            <img src="assets/images/EatRealLogo.png" alt="Logo" class="logo">
+        </div>
+        <div class="header-text">
+            <p class="subtitle">
+                Transform your health through the power of <span class="highlight">natural</span>, <span class="highlight">whole foods</span>.<br>
+                Your journey to <span class="highlight">vitality</span> begins here.
+            </p>
+            <div class="social-links">
+                <a href="https://www.tiktok.com/@.eatreal" target="_blank" class="social-link"><i class="fab fa-tiktok"></i></a>
+                <a href="mailto:eatreal47@gmail.com" class="social-link"><i class="far fa-envelope"></i></a>
+            </div>
         </div>
     </header>
+    <!-- Mobile Card Stack (only visible on mobile) -->
+    <div class="meal-plans-grid mobile-only">
+        <!-- Personalised Nutrition Plan -->
+        <div class="meal-plan-card">
+            <a href="questionnaire.html" class="plan-link">
+                <img src="assets/images/NutritionPlan.png" alt="Personalised Nutrition Plan" class="plan-image">
+                <div class="plan-info">
+                    <h2>Personalised Nutrition Plan</h2>
+                    <p>Get a customized nutrition plan based on your goals and preferences.</p>
+                    <div class="price-tag">
+                        <span class="price">Free</span>
+                        <button class="buy-now-button">Get Yours Free</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Meal Plans -->
+        <div class="meal-plan-card">
+            <a href="mealplans.html" class="plan-link">
+                <img src="assets/images/mealplans.png" alt="Meal Plans" class="plan-image">
+                <div class="plan-info">
+                    <h2>Meal Plans</h2>
+                    <p>Weekly meal plans designed for optimal nutrition and taste.</p>
+                    <div class="price-tag">
+                        <span class="price">£4.99</span>
+                        <button class="buy-now-button">Learn More</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Food Bible -->
+        <div class="meal-plan-card">
+            <a href="product.html" class="plan-link">
+                <img src="assets/images/foodbible.png" alt="The Food Bible" class="plan-image">
+                <div class="plan-info">
+                    <h2>The Food Bible</h2>
+                    <p>Your comprehensive guide to understanding food and its impact on your body.</p>
+                    <div class="price-tag">
+                        <span class="price">£14.99</span>
+                        <button class="buy-now-button">Learn More</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 
     <main>
-        <div class="products-container">
+        <!-- Mobile Products Carousel -->
+        <div class="mobile-products-carousel">
+            <div class="carousel-container">
+                <div class="carousel-track">
+                    <!-- Meal Plans Card -->
+                    <div class="carousel-card">
+                        <a href="mealplans.html" class="featured-product">
+                            <img src="assets/images/mealplans.png" alt="Meal Plans" class="featured-image">
+                            <div class="product-info">
+                                <h2>Meal Plans</h2>
+                                <p>Weekly meal plans designed for optimal nutrition and taste.</p>
+                                <div class="price-container">
+                                    <span class="original-price">£9.99</span>
+                                    <span class="price">£4.99</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Food Bible Card -->
+                    <div class="carousel-card">
+                        <a href="product.html" class="featured-product">
+                            <img src="assets/images/foodbible.png" alt="Food Bible" class="featured-image">
+                            <div class="product-info">
+                                <h2>The Food Bible</h2>
+                                <p>Your comprehensive guide to understanding food and its impact on your body.</p>
+                                <div class="price-container">
+                                    <span class="original-price">£34.99</span>
+                                    <span class="price">£14.99</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Personalized Plan Card -->
+                    <div class="carousel-card">
+                        <a href="questionnaire.html" class="featured-product">
+                            <img src="assets/images/NutritionPlan.png" alt="Personalized Plan" class="featured-image">
+                            <div class="product-info">
+                                <h2>Personalised Nutrition Plan</h2>
+                                <p>Get a customized nutrition plan based on your goals and preferences.</p>
+                                <div class="price-container">
+                                    <span class="original-price">£5.99</span>
+                                    <span class="price">Free</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Carousel Navigation -->
+            <div class="carousel-nav">
+                <button class="carousel-dot active" data-slide="0"></button>
+                <button class="carousel-dot" data-slide="1"></button>
+                <button class="carousel-dot" data-slide="2"></button>
+            </div>
+        </div>
+
+        <!-- Desktop Products Container -->
+        <div class="products-container desktop-only">
             <!-- Left Side Products -->
             <div class="side-products">
                 <a href="mealplans.html" class="featured-product">
@@ -55,7 +332,7 @@
                 <a href="questionnaire.html" class="featured-product">
                     <img src="assets/images/NutritionPlan.png" alt="Personalized Plan" class="featured-image">
                     <div class="product-info">
-                        <h2>Personalized Nutrition Plan</h2>
+                        <h2>Personalised Nutrition Plan</h2>
                         <p>Get a customized nutrition plan based on your goals and preferences.</p>
                         <div class="price-container">
                             <span class="original-price">£5.99</span>
@@ -74,5 +351,6 @@
     </div>
 
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/mobile-carousel.js"></script>
 </body>
 </html>
